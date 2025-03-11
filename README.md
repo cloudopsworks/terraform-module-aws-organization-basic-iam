@@ -58,50 +58,50 @@ Available targets:
   help                                Help screen
   help/all                            Display help for all targets
   help/short                          This help short screen
-  lint:                              Lint terraform code
+  lint                                Lint terraform/opentofu code
+  tag                                 Tag the current version
 
 ```
 ## Requirements
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
 
 ## Providers
 
-| Name | Version |
-|------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+No providers.
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_account_policy"></a> [account\_policy](#module\_account\_policy) | ./modules/account-policy | n/a |
-| <a name="module_tags"></a> [tags](#module\_tags) | cloudopsworks/tags/local | 1.0.8 |
+| <a name="module_tags"></a> [tags](#module\_tags) | cloudopsworks/tags/local | 1.0.9 |
 | <a name="module_tf_role"></a> [tf\_role](#module\_tf\_role) | ./modules/terraform-role | n/a |
 
 ## Resources
 
-| Name | Type |
-|------|------|
-| [aws_iam_group_policy.tf_group_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_group_policy) | resource |
-| [aws_iam_policy_document.tf_policy_doc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+No resources.
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_account_id"></a> [account\_id](#input\_account\_id) | n/a | `string` | n/a | yes |
-| <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | n/a | `string` | n/a | yes |
-| <a name="input_environment_type"></a> [environment\_type](#input\_environment\_type) | n/a | `string` | n/a | yes |
-| <a name="input_fintech_name"></a> [fintech\_name](#input\_fintech\_name) | n/a | `string` | n/a | yes |
-| <a name="input_name"></a> [name](#input\_name) | n/a | `string` | `""` | no |
-| <a name="input_organization_name"></a> [organization\_name](#input\_organization\_name) | n/a | `string` | n/a | yes |
+| <a name="input_extra_tags"></a> [extra\_tags](#input\_extra\_tags) | n/a | `map(string)` | `{}` | no |
+| <a name="input_is_org"></a> [is\_org](#input\_is\_org) | n/a | `bool` | `false` | no |
+| <a name="input_org"></a> [org](#input\_org) | n/a | <pre>object({<br/>    organization_name = string<br/>    organization_unit = string<br/>    environment_type  = string<br/>    environment_name  = string<br/>  })</pre> | n/a | yes |
+| <a name="input_organization_id"></a> [organization\_id](#input\_organization\_id) | n/a | `string` | `""` | no |
+| <a name="input_parent_account_id"></a> [parent\_account\_id](#input\_parent\_account\_id) | n/a | `string` | `""` | no |
+| <a name="input_secrets_manager"></a> [secrets\_manager](#input\_secrets\_manager) | n/a | `bool` | `false` | no |
+| <a name="input_trust_accounts_arns"></a> [trust\_accounts\_arns](#input\_trust\_accounts\_arns) | n/a | `list(string)` | `[]` | no |
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_role_arn"></a> [role\_arn](#output\_role\_arn) | n/a |
 
 
 
@@ -135,7 +135,7 @@ Please use the [issue tracker](https://github.com/cloudopsworks/terraform-module
 
 ## Copyrights
 
-Copyright © 2024-2024 [Cloud Ops Works LLC](https://cloudops.works)
+Copyright © 2024-2025 [Cloud Ops Works LLC](https://cloudops.works)
 
 
 
