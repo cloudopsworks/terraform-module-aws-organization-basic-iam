@@ -4,14 +4,7 @@ data "aws_iam_policy_document" "tf_ses_admin" {
   statement {
     sid = "AllowRead"
     actions = [
-      "ses:List*",
-      "ses:Get*",
-      "ses:Create*",
-      "ses:Describe*",
-      "ses:Delete*",
-      "ses:Update*",
-      "ses:Set*",
-      "ses:Verify*"
+      "ses:*",
     ]
 
     resources = [
