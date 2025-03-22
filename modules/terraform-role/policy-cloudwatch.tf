@@ -5,26 +5,7 @@ data "aws_iam_policy_document" "tf_cloudwatch_admin" {
     sid    = "AllowCloudWatchAdmin"
     effect = "Allow"
     actions = [
-      "logs:DescribeQueries",
-      "logs:GetLogRecord",
-      "logs:StopQuery",
-      "logs:TestMetricFilter",
-      "logs:DeleteQueryDefinition",
-      "logs:PutQueryDefinition",
-      "logs:GetLogDelivery",
-      "logs:ListLogDeliveries",
-      "logs:Link",
-      "logs:CreateLogDelivery",
-      "logs:DeleteResourcePolicy",
-      "logs:PutResourcePolicy",
-      "logs:DescribeExportTasks",
-      "logs:GetQueryResults",
-      "logs:UpdateLogDelivery",
-      "logs:CancelExportTask",
-      "logs:DeleteLogDelivery",
-      "logs:DescribeQueryDefinitions",
-      "logs:DescribeResourcePolicies",
-      "logs:DescribeDestinations"
+      "logs:*",
     ]
     resources = ["*"]
   }
