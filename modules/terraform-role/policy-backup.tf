@@ -1,4 +1,4 @@
-# SES Admin Policy
+# AWS Backup Policy
 data "aws_iam_policy_document" "tf_backup_admin" {
   version = "2012-10-17"
   statement {

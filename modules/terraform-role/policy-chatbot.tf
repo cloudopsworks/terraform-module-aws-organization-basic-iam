@@ -1,4 +1,4 @@
-# SES Admin Policy
+# Amazon Q Developer Chatbot Admin Policy
 data "aws_iam_policy_document" "tf_chatbot_admin" {
   version = "2012-10-17"
   statement {
