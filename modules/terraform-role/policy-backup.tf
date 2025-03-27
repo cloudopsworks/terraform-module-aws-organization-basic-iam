@@ -5,6 +5,7 @@ data "aws_iam_policy_document" "tf_backup_admin" {
     sid = "AllowRead"
     actions = [
       "backup:*",
+      "backup-storage:*",
     ]
 
     resources = [
