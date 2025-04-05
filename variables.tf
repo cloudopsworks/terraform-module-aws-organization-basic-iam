@@ -49,6 +49,12 @@ variable "default_terraform_user" {
   default     = "terraform-access"
 }
 
+variable "default_terraform_role" {
+  description = "Default Terraform role for the account"
+  type        = string
+  default     = "TerraformAccessRole"
+}
+
 ## YAML Sample
 # settings:
 #   s3: true | false # Defaults to false
