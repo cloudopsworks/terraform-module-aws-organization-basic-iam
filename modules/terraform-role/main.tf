@@ -20,7 +20,7 @@ data "aws_iam_policy_document" "terraform_access_trust" {
 }
 
 resource "aws_iam_role" "terraform_access" {
-  name               = "TerraformAccessRole"
+  name               = var.default_terraform_role
   assume_role_policy = data.aws_iam_policy_document.terraform_access_trust.json
   description        = "Terraform Assumed Role for Resource Management"
   tags               = var.tags
