@@ -37,12 +37,49 @@ variable "organization_id" {
   default = ""
 }
 
-variable "secrets_manager" {
-  type    = bool
-  default = false
+variable "trust_accounts_arns" {
+  description = "List of trust account ARNs"
+  type        = list(string)
+  default     = []
 }
 
-variable "trust_accounts_arns" {
-  type    = list(string)
-  default = []
+variable "default_terraform_user" {
+  description = "Default Terraform user for the account"
+  type        = string
+  default     = "terraform-access"
+}
+
+## YAML Sample
+# settings:
+#   s3: true | false # Defaults to false
+#   api_gateway: true | false # Defaults to false
+#   cognito: true | false # Defaults to false
+#   ec2: true | false # Defaults to false
+#   rds: true | false # Defaults to false
+#   vpc: true | false # Defaults to false
+#   acm: true | false # Defaults to false
+#   sso: true | false # Defaults to false
+#   ssm: true | false # Defaults to false
+#   sqs: true | false # Defaults to false
+#   sns: true | false # Defaults to false
+#   ses: true | false # Defaults to false
+#   lambda: true | false # Defaults to false
+#   secrets_manager: true | false # Defaults to false
+#   iam: true | false # Defaults to false
+#   cloudwatch: true | false # Defaults to false
+#   eks: true | false # Defaults to false
+#   ram: true | false # Defaults to false
+#   route53: true | false # Defaults to false
+#   kms: true | false # Defaults to false
+#   iam: true | false # Defaults to false
+#   eventbridge: true | false # Defaults to false
+#   elastic_beanstalk: true | false # Defaults to false
+#   dynamodb: true | false # Defaults to false
+#   cloudfront: true | false # Defaults to false
+#   awschatbot: true | false # Defaults to false
+#   awsbackup: true | false # Defaults to false
+variable "settings" {
+  description = "Map for policy settings"
+  type        = any
+  default     = {}
 }

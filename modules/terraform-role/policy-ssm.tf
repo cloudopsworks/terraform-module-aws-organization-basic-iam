@@ -1,5 +1,6 @@
 # SSM Parameter Store reader/writer policy
 data "aws_iam_policy_document" "tf_ssm_store" {
+  count   = try(var.settings.ssm, false) ? 1 : 0
   version = "2012-10-17"
 
   statement {
@@ -19,7 +20,7 @@ data "aws_iam_policy_document" "tf_ssm_store" {
     ]
     resources = [
       "arn:aws:ssm:*:${var.account_id}:parameter/*", # Account Parameters
-      "arn:aws:ssm:*::parameter/*" # Global parameters
+      "arn:aws:ssm:*::parameter/*"                   # Global parameters
     ]
   }
 
@@ -34,7 +35,8 @@ data "aws_iam_policy_document" "tf_ssm_store" {
 }
 
 resource "aws_iam_role_policy" "terraform_access_ssm_store" {
+  count  = try(var.settings.ssm, false) ? 1 : 0
   name   = "SSMParameterStoreWriter"
   role   = aws_iam_role.terraform_access.name
-  policy = data.aws_iam_policy_document.tf_ssm_store.json
+  policy = data.aws_iam_policy_document.tf_ssm_store[count.index].json
 }
