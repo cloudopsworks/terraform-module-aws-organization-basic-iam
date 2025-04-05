@@ -26,12 +26,19 @@ variable "organization_id" {
   default = ""
 }
 
-variable "secrets_manager" {
-  type    = bool
-  default = false
+variable "trust_accounts_arns" {
+  description = "List of trust account ARNs"
+  type        = list(string)
+  default     = []
 }
 
-variable "trust_accounts_arns" {
-  type    = list(string)
-  default = []
+variable "settings" {
+  description = "Object of account settings."
+  type        = any
+  default     = {}
+}
+
+variable "default_terraform_user" {
+  description = "Default Terraform user for the account"
+  type        = string
 }

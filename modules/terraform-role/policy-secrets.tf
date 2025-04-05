@@ -1,6 +1,6 @@
 # Secrets Manager Reader Policy
 data "aws_iam_policy_document" "tf_secrets_reader" {
-  count   = var.secrets_manager ? 0 : 1
+  count   = try(var.settings.secrets_manager, false) ? 1 : 0
   version = "2012-10-17"
 
   statement {
@@ -29,7 +29,7 @@ data "aws_iam_policy_document" "tf_secrets_reader" {
 }
 
 resource "aws_iam_role_policy" "terraform_access_secrets_reader" {
-  count  = var.secrets_manager ? 0 : 1
+  count  = try(var.settings.secrets_manager, false) ? 1 : 0
   name   = "SecretsReader"
   role   = aws_iam_role.terraform_access.name
   policy = data.aws_iam_policy_document.tf_secrets_reader[0].json
@@ -37,7 +37,7 @@ resource "aws_iam_role_policy" "terraform_access_secrets_reader" {
 
 # Secrets Manager Reader Policy
 data "aws_iam_policy_document" "tf_secrets_admin" {
-  count   = var.secrets_manager ? 1 : 0
+  count   = try(var.settings.secrets_manager, false) ? 1 : 0
   version = "2012-10-17"
 
   statement {
@@ -63,7 +63,7 @@ data "aws_iam_policy_document" "tf_secrets_admin" {
 }
 
 resource "aws_iam_role_policy" "terraform_access_secrets_admin" {
-  count  = var.secrets_manager ? 1 : 0
+  count  = try(var.settings.secrets_manager, false) ? 1 : 0
   name   = "SecretsAdmin"
   role   = aws_iam_role.terraform_access.name
   policy = data.aws_iam_policy_document.tf_secrets_admin[0].json

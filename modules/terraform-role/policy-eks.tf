@@ -1,6 +1,7 @@
 # EKS Admin Policy
 # EKS & ECR are combined into a single Customer Managed Policy
 data "aws_iam_policy_document" "tf_eks_admin" {
+  count   = try(var.settings.eks, false) ? 1 : 0
   version = "2012-10-17"
   statement {
     sid    = "EKSCreate"
@@ -65,28 +66,30 @@ data "aws_iam_policy_document" "tf_eks_admin" {
   }
 
   statement {
-    sid = "APSAdmin"
-    effect = "Allow"
-    actions = ["aps:*"]
+    sid       = "APSAdmin"
+    effect    = "Allow"
+    actions   = ["aps:*"]
     resources = ["*"]
   }
 
   statement {
-    sid = "Grafana"
-    effect = "Allow"
-    actions = ["grafana:*"]
+    sid       = "Grafana"
+    effect    = "Allow"
+    actions   = ["grafana:*"]
     resources = ["*"]
   }
 }
 
 resource "aws_iam_policy" "terraform_access_eks_admin" {
+  count       = try(var.settings.eks, false) ? 1 : 0
   name        = "TerraformAccessRole-EKSAdmin-policy"
-  policy      = data.aws_iam_policy_document.tf_eks_admin.json
+  policy      = data.aws_iam_policy_document.tf_eks_admin[count.index].json
   description = "TerraformAccess EKS Admin Managed Policy"
   tags        = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "terraform_access_eks_admin" {
-  policy_arn = aws_iam_policy.terraform_access_eks_admin.arn
+  count      = try(var.settings.eks, false) ? 1 : 0
+  policy_arn = aws_iam_policy.terraform_access_eks_admin[count.index].arn
   role       = aws_iam_role.terraform_access.name
 }

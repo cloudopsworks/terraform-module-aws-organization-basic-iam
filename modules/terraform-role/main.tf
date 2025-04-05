@@ -12,7 +12,7 @@ data "aws_iam_policy_document" "terraform_access_trust" {
     principals {
       type = "AWS"
       identifiers = concat([
-        "arn:aws:iam::${var.trust_account_id}:user/terraform-access",
+        "arn:aws:iam::${var.trust_account_id}:user/${var.default_terraform_user}",
         ],
       var.trust_accounts_arns)
     }

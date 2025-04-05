@@ -1,5 +1,6 @@
 # Route53 Admin Policy
 data "aws_iam_policy_document" "tf_route53_admin" {
+  count   = try(var.settings.route53, false) ? 1 : 0
   version = "2012-10-17"
 
   statement {
@@ -62,11 +63,13 @@ data "aws_iam_policy_document" "tf_route53_admin" {
 }
 
 resource "aws_iam_policy" "terraform_access_route53_admin" {
+  count  = try(var.settings.route53, false) ? 1 : 0
   name   = "TerraformAccessRole-Route53-policy"
-  policy = data.aws_iam_policy_document.tf_route53_admin.json
+  policy = data.aws_iam_policy_document.tf_route53_admin[count.index].json
 }
 
 resource "aws_iam_role_policy_attachment" "terraform_access_route53_admin" {
-  policy_arn = aws_iam_policy.terraform_access_route53_admin.arn
+  count      = try(var.settings.route53, false) ? 1 : 0
+  policy_arn = aws_iam_policy.terraform_access_route53_admin[count.index].arn
   role       = aws_iam_role.terraform_access.name
 }
