@@ -49,3 +49,8 @@ variable "default_terraform_role" {
   type        = string
   default     = "TerraformAccessRole"
 }
+
+variable "secrets_manager_policy" {
+  description = "Custom policy for Secrets Manager / Cross account"
+  type        = any
+}
