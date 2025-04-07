@@ -17,6 +17,7 @@ module "tf_role" {
   organization_id        = var.organization_id
   trust_accounts_arns    = var.trust_accounts_arns
   default_terraform_user = var.default_terraform_user
+  default_terraform_role = var.default_terraform_role
   secrets_manager_policy = var.secrets_manager_policy
   settings               = var.settings
   tags                   = local.all_tags
