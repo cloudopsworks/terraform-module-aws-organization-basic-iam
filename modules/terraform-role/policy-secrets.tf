@@ -94,8 +94,8 @@ data "aws_iam_policy_document" "secrets_cross_account" {
 }
 
 resource "aws_iam_role_policy" "terraform_access_secrets_cross_account" {
-  count = length(var.secrets_manager_policy) > 0 ? 1 : 0
-  name  = "SecretsManagerCrossAccountPolicy"
-    role  = aws_iam_role.terraform_access.name
+  count  = length(var.secrets_manager_policy) > 0 ? 1 : 0
+  name   = "SecretsManagerCrossAccountPolicy"
+  role   = aws_iam_role.terraform_access.name
   policy = data.aws_iam_policy_document.secrets_cross_account[0].json
 }

@@ -46,7 +46,7 @@ variable "trust_accounts_arns" {
 variable "default_terraform_user" {
   description = "Default Terraform user for the account"
   type        = string
-    default     = "terraform-access"
+  default     = "terraform-access"
 }
 
 variable "default_terraform_role" {
