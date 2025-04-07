@@ -41,11 +41,14 @@ variable "settings" {
 variable "default_terraform_user" {
   description = "Default Terraform user for the account"
   type        = string
-  default     = "terraform-access"
 }
 
 variable "default_terraform_role" {
   description = "Default Terraform role for the account"
   type        = string
-  default     = "TerraformAccessRole"
+}
+
+variable "secrets_manager_policy" {
+  description = "Custom policy for Secrets Manager / Cross account"
+  type        = any
 }

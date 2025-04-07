@@ -52,7 +52,13 @@ variable "default_terraform_user" {
 variable "default_terraform_role" {
   description = "Default Terraform role for the account"
   type        = string
-  default     = "TerraformAccessRole"
+  default     = "terraform-access-role"
+}
+
+variable "secrets_manager_policy" {
+  description = "Custom policy for Secrets Manager / Cross account"
+  type        = any
+  default     = {}
 }
 
 ## YAML Sample

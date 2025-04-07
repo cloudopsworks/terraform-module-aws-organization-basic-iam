@@ -69,3 +69,33 @@ resource "aws_iam_role_policy" "terraform_access_secrets_admin" {
   policy = data.aws_iam_policy_document.tf_secrets_admin[0].json
 }
 
+data "aws_iam_policy_document" "secrets_cross_account" {
+  count = length(var.secrets_manager_policy) > 0 ? 1 : 0
+  statement {
+    sid    = "SecretsManagerCrossAccount"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+    resources = [
+      var.secrets_manager_policy.secret_arn
+    ]
+  }
+  statement {
+    sid    = "SecretsManagerCrossAccountKms"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt"
+    ]
+    resources = [
+      var.secrets_manager_policy.kms_key_arn
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "terraform_access_secrets_cross_account" {
+  count  = length(var.secrets_manager_policy) > 0 ? 1 : 0
+  name   = "SecretsManagerCrossAccountPolicy"
+  role   = aws_iam_role.terraform_access.name
+  policy = data.aws_iam_policy_document.secrets_cross_account[0].json
+}
