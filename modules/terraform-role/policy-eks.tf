@@ -82,7 +82,7 @@ data "aws_iam_policy_document" "tf_eks_admin" {
 
 resource "aws_iam_policy" "terraform_access_eks_admin" {
   count       = try(var.settings.eks, false) ? 1 : 0
-  name        = "TerraformAccessRole-EKSAdmin-policy"
+  name        = "${var.default_terraform_role}-EKSAdmin-policy"
   policy      = data.aws_iam_policy_document.tf_eks_admin[count.index].json
   description = "TerraformAccess EKS Admin Managed Policy"
   tags        = var.tags
