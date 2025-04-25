@@ -1,6 +1,6 @@
 # AWS Backup Policy
 data "aws_iam_policy_document" "tf_securityhub_admin" {
-  count   = try(var.settings.awsconfig, false) ? 1 : 0
+  count   = try(var.settings.security_hub, false) ? 1 : 0
   version = "2012-10-17"
   statement {
     sid = "AllowRead"
