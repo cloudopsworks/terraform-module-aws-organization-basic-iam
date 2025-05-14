@@ -67,25 +67,25 @@ resource "aws_iam_role_policy" "terraform_access_organization_admin" {
 }
 
 resource "aws_iam_role_policy_attachment" "security_hub_organization_admin" {
-  count      = try(var.settings.security_hub_org, false)
+  count      = try(var.settings.security_hub_org, false) ? 1 : 0
   role       = aws_iam_role.terraform_access.name
   policy_arn = "arn:aws:iam::aws:policy/AWSSecurityHubOrganizationsAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "detective_organization_admin" {
-  count      = try(var.settings.detective_org, false)
+  count      = try(var.settings.detective_org, false) ? 1 : 0
   role       = aws_iam_role.terraform_access.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonDetectiveOrganizationsAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "resource_explorer_organization_admin" {
-  count      = try(var.settings.resource_explorer_org, false)
+  count      = try(var.settings.resource_explorer_org, false) ? 1 : 0
   role       = aws_iam_role.terraform_access.name
   policy_arn = "arn:aws:iam::aws:policy/AWSResourceExplorerOrganizationsAccess"
 }
 
 resource "aws_iam_role_policy_attachment" "devopsguru_organization_admin" {
-  count      = try(var.settings.devopsguru_org, false)
+  count      = try(var.settings.devopsguru_org, false) ? 1 : 0
   role       = aws_iam_role.terraform_access.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonDevOpsGuruOrganizationsAccess"
 }
