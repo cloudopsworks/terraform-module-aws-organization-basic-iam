@@ -13,9 +13,9 @@ data "aws_iam_policy_document" "tf_cloudformation_admin" {
   }
 }
 
-resource "aws_iam_role_policy" "terraform_access_cloudtrail_admin" {
+resource "aws_iam_role_policy" "terraform_access_cloudtransformation_admin" {
   count  = try(var.settings.cloudformation, false) ? 1 : 0
-  name   = "ConfigAdmin"
+  name   = "CloudformationAdmin"
   role   = aws_iam_role.terraform_access.name
   policy = data.aws_iam_policy_document.tf_cloudformation_admin[count.index].json
 }
