@@ -3,7 +3,7 @@ data "aws_iam_policy_document" "tf_ses_admin" {
   count   = try(var.settings.ses, false) ? 1 : 0
   version = "2012-10-17"
   statement {
-    sid = "AllowRead"
+    sid = "SESAllowAll"
     actions = [
       "ses:*",
     ]
