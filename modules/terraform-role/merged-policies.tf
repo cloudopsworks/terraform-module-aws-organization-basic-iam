@@ -15,7 +15,7 @@ locals {
     try(var.settings.secrets_manager, false) ? [data.aws_iam_policy_document.tf_secrets_admin[0].json, data.aws_iam_policy_document.tf_secrets_reader[0].json] : [],
     length(var.secrets_manager_policy) > 0 ? [data.aws_iam_policy_document.secrets_cross_account[0].json] : [],
     try(var.settings.iam, false) ? [data.aws_iam_policy_document.tf_iam_full[0].json] : [],
-    try(var.settings.cloudtrail, false) ? [data.aws_iam_policy_document.tf_cloudtrail_admin[count.index].json] : []
+    try(var.settings.cloudtrail, false) ? [data.aws_iam_policy_document.tf_cloudtrail_admin[0].json] : []
   )
 }
 
