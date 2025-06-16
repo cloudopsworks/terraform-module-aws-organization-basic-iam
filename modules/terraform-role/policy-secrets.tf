@@ -52,7 +52,7 @@ data "aws_iam_policy_document" "tf_secrets_admin" {
   }
 
   statement {
-    sid    = "SecretsManagerList"
+    sid    = "SecretsManagerListAdmin"
     effect = "Allow"
     actions = [
       "secretsmanager:BatchGetSecretValue",
