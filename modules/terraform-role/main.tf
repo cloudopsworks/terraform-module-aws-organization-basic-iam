@@ -26,3 +26,14 @@ resource "aws_iam_role" "terraform_access" {
   tags               = var.tags
 }
 
+resource "aws_iam_policy" "terraform_access_sentsitive" {
+  name        = format("%s-sentsitive-policy", var.default_terraform_role)
+  description = "Terraform Access Policy for Resource Management"
+  policy      = data.aws_iam_policy_document.terraform_access_sensitive_combined.minified_json
+  tags        = var.tags
+}
+
+resource "aws_iam_role_policy_attachment" "terraform_access" {
+  role       = aws_iam_role.terraform_access.name
+  policy_arn = aws_iam_policy.terraform_access_sentsitive.arn
+}

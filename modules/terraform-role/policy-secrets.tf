@@ -28,12 +28,12 @@ data "aws_iam_policy_document" "tf_secrets_reader" {
   }
 }
 
-resource "aws_iam_role_policy" "terraform_access_secrets_reader" {
-  count  = try(var.settings.secrets_manager, false) ? 1 : 0
-  name   = "SecretsReader"
-  role   = aws_iam_role.terraform_access.name
-  policy = data.aws_iam_policy_document.tf_secrets_reader[0].json
-}
+# resource "aws_iam_role_policy" "terraform_access_secrets_reader" {
+#   count  = try(var.settings.secrets_manager, false) ? 1 : 0
+#   name   = "SecretsReader"
+#   role   = aws_iam_role.terraform_access.name
+#   policy = data.aws_iam_policy_document.tf_secrets_reader[0].json
+# }
 
 # Secrets Manager Reader Policy
 data "aws_iam_policy_document" "tf_secrets_admin" {
@@ -62,12 +62,12 @@ data "aws_iam_policy_document" "tf_secrets_admin" {
   }
 }
 
-resource "aws_iam_role_policy" "terraform_access_secrets_admin" {
-  count  = try(var.settings.secrets_manager, false) ? 1 : 0
-  name   = "SecretsAdmin"
-  role   = aws_iam_role.terraform_access.name
-  policy = data.aws_iam_policy_document.tf_secrets_admin[0].json
-}
+# resource "aws_iam_role_policy" "terraform_access_secrets_admin" {
+#   count  = try(var.settings.secrets_manager, false) ? 1 : 0
+#   name   = "SecretsAdmin"
+#   role   = aws_iam_role.terraform_access.name
+#   policy = data.aws_iam_policy_document.tf_secrets_admin[0].json
+# }
 
 data "aws_iam_policy_document" "secrets_cross_account" {
   count = length(var.secrets_manager_policy) > 0 ? 1 : 0
@@ -93,9 +93,9 @@ data "aws_iam_policy_document" "secrets_cross_account" {
   }
 }
 
-resource "aws_iam_role_policy" "terraform_access_secrets_cross_account" {
-  count  = length(var.secrets_manager_policy) > 0 ? 1 : 0
-  name   = "SecretsManagerCrossAccountPolicy"
-  role   = aws_iam_role.terraform_access.name
-  policy = data.aws_iam_policy_document.secrets_cross_account[0].json
-}
+# resource "aws_iam_role_policy" "terraform_access_secrets_cross_account" {
+#   count  = length(var.secrets_manager_policy) > 0 ? 1 : 0
+#   name   = "SecretsManagerCrossAccountPolicy"
+#   role   = aws_iam_role.terraform_access.name
+#   policy = data.aws_iam_policy_document.secrets_cross_account[0].json
+# }

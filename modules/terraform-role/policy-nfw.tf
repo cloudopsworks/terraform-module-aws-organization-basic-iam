@@ -29,9 +29,9 @@ data "aws_iam_policy_document" "tf_nfw_admin" {
   }
 }
 
-resource "aws_iam_role_policy" "terraform_access_nfw_admin" {
-  count  = var.is_org && try(var.settings.nfw, false) ? 1 : 0
-  name   = "NetworkFirewallAdmin"
-  role   = aws_iam_role.terraform_access.name
-  policy = data.aws_iam_policy_document.tf_nfw_admin[0].json
-}
+# resource "aws_iam_role_policy" "terraform_access_nfw_admin" {
+#   count  = var.is_org && try(var.settings.nfw, false) ? 1 : 0
+#   name   = "NetworkFirewallAdmin"
+#   role   = aws_iam_role.terraform_access.name
+#   policy = data.aws_iam_policy_document.tf_nfw_admin[0].json
+# }

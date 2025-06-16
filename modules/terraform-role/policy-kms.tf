@@ -34,9 +34,9 @@ data "aws_iam_policy_document" "tf_kms_admin" {
   }
 }
 
-resource "aws_iam_role_policy" "terraform_access_kms_admin" {
-  count  = try(var.settings.kms, false) ? 1 : 0
-  name   = "KMSAdmin"
-  role   = aws_iam_role.terraform_access.name
-  policy = data.aws_iam_policy_document.tf_kms_admin[count.index].json
-}
+# resource "aws_iam_role_policy" "terraform_access_kms_admin" {
+#   count  = try(var.settings.kms, false) ? 1 : 0
+#   name   = "KMSAdmin"
+#   role   = aws_iam_role.terraform_access.name
+#   policy = data.aws_iam_policy_document.tf_kms_admin[count.index].json
+# }
