@@ -3,7 +3,7 @@ data "aws_iam_policy_document" "tf_macie2_admin" {
   count   = try(var.settings.macie2, false) ? 1 : 0
   version = "2012-10-17"
   statement {
-    sid = "AllowRead"
+    sid = "Macie2AllowAll"
     actions = [
       "macie2:*",
     ]
