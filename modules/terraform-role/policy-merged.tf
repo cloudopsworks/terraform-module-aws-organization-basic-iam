@@ -20,5 +20,6 @@ locals {
 }
 
 data "aws_iam_policy_document" "terraform_access_sensitive_combined" {
+  count                   = length(local.sensitive_policies) > 0 ? 1 : 0
   source_policy_documents = local.sensitive_policies
 }
