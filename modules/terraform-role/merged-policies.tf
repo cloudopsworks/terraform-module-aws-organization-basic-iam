@@ -19,7 +19,8 @@ locals {
     try(var.settings.security_hub_org, false) ? [data.aws_iam_policy.security_hub_organization_admin[0].policy] : [],
     try(var.settings.detective_org, false) ? [data.aws_iam_policy.detective_organization_admin[0].policy] : [],
     try(var.settings.resource_explorer_org, false) ? [data.aws_iam_policy.resource_explorer_organization_admin[0].policy] : [],
-    try(var.settings.devopsguru_org, false) ? [data.aws_iam_policy.devopsguru_organization_admin[0].policy] : []
+    try(var.settings.devopsguru_org, false) ? [data.aws_iam_policy.devopsguru_organization_admin[0].policy] : [],
+    try(var.settings.guard_duty, false) ? [data.aws_iam_policy_document.tf_guardduty_admin[0].json] : []
   )
 }
 
