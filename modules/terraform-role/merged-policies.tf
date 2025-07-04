@@ -20,7 +20,8 @@ locals {
     try(var.settings.detective_org, false) ? [data.aws_iam_policy.detective_organization_admin[0].policy] : [],
     try(var.settings.resource_explorer_org, false) ? [data.aws_iam_policy.resource_explorer_organization_admin[0].policy] : [],
     try(var.settings.devopsguru_org, false) ? [data.aws_iam_policy.devopsguru_organization_admin[0].policy] : [],
-    try(var.settings.guard_duty, false) ? [data.aws_iam_policy_document.tf_guardduty_admin[0].json] : []
+    try(var.settings.guard_duty, false) ? [data.aws_iam_policy_document.tf_guardduty_admin[0].json] : [],
+    try(var.settings.access_analyzer, false) ? [data.aws_iam_policy_document.tf_access_analyzer[0].json] : []
   )
 }
 
