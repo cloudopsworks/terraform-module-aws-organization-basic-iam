@@ -27,6 +27,13 @@ data "aws_iam_policy_document" "tf_cloudwatch_admin" {
       "arn:aws:logs:*:${var.account_id}:log-group:*:log-stream:*"
     ]
   }
+
+  statement {
+    sid = "AllowSynthetics"
+    effect = "Allow"
+    actions = ["synthetics:*"]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "terraform_access_cloudwatch_admin" {
