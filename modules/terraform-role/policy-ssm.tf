@@ -51,6 +51,7 @@ data "aws_iam_policy_document" "tf_ssm_store" {
       "ssm:GetCommandInvocation",
       "ssm:CancelCommand"
     ]
+    resources = ["*"]
   }
 
   statement {
@@ -68,6 +69,7 @@ data "aws_iam_policy_document" "tf_ssm_store" {
       "ssm:PutCalendar",
       "ssm:GetCalendar",
     ]
+    resources = ["*"]
   }
 }
 
