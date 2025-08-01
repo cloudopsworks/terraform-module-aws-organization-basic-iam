@@ -25,12 +25,49 @@ data "aws_iam_policy_document" "tf_ssm_store" {
   }
 
   statement {
-    sid    = "SSMAllowDescribe"
+    sid    = "SSMAllowAdmin"
     effect = "Allow"
     actions = [
-      "ssm:DescribeParameters"
+      "ssm:DescribeParameters",
+      "ssm:GetServiceSetting",
+      "ssm:UpdateServiceSetting",
+      "ssm:ResetServiceSetting",
+      "ssm:ExecuteAPI",
+      "ssm:GetManifest",
+      "ssm:PutConfigurePackageResult",
+      "ssm:AddTagsToResource",
+      "ssm:RemoveTagsFromResource",
     ]
     resources = ["*"]
+  }
+
+  statement {
+    sid = "SSMRunCommands"
+    effect = "Allow"
+    actions = [
+      "ssm:SendCommand",
+      "ssm:ListCommands",
+      "ssm:ListCommandInvocations",
+      "ssm:GetCommandInvocation",
+      "ssm:CancelCommand"
+    ]
+  }
+
+  statement {
+    sid = "SSMDocumentsAndChangeCalendar"
+    effect = "Allow"
+    actions = [
+      "ssm:CreateDocument",
+      "ssm:UpdateDocument",
+      "ssm:DeleteDocument",
+      "ssm:GetDocument",
+      "ssm:ListDocuments",
+      "ssm:ListDocumentVersions",
+      "ssm:DescribeDocument",
+      "ssm:GetCalendarState",
+      "ssm:PutCalendar",
+      "ssm:GetCalendar",
+    ]
   }
 }
 
