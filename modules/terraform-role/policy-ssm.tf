@@ -42,7 +42,7 @@ data "aws_iam_policy_document" "tf_ssm_store" {
   }
 
   statement {
-    sid = "SSMRunCommands"
+    sid    = "SSMRunCommands"
     effect = "Allow"
     actions = [
       "ssm:SendCommand",
@@ -55,7 +55,7 @@ data "aws_iam_policy_document" "tf_ssm_store" {
   }
 
   statement {
-    sid = "SSMDocumentsAndChangeCalendar"
+    sid    = "SSMDocumentsAndChangeCalendar"
     effect = "Allow"
     actions = [
       "ssm:CreateDocument",
