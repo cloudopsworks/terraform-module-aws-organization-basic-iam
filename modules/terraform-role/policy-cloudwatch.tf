@@ -29,9 +29,9 @@ data "aws_iam_policy_document" "tf_cloudwatch_admin" {
   }
 
   statement {
-    sid = "AllowSynthetics"
-    effect = "Allow"
-    actions = ["synthetics:*"]
+    sid       = "AllowSynthetics"
+    effect    = "Allow"
+    actions   = ["synthetics:*"]
     resources = ["*"]
   }
 }
