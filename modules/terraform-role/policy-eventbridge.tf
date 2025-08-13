@@ -30,6 +30,21 @@ data "aws_iam_policy_document" "tf_eventbridge_admin" {
     ]
     resources = ["*"]
   }
+
+  statement {
+    sid    = "AllowAdminEventBridge"
+    effect = "Allow"
+    actions = [
+      "events:List*",
+      "events:Describe*",
+      "events:Create*",
+      "events:Put*",
+      "events:Delete*",
+      "events:TagResource",
+      "events:UntagResource"
+    ]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "terraform_access_eventbridge_admin" {
