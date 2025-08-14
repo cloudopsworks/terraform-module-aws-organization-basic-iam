@@ -59,6 +59,15 @@ data "aws_iam_policy_document" "tf_ecs_admin" {
       "arn:aws:ecr:*:${var.account_id}:repository/*",
     ]
   }
+
+  statement {
+    sid = "APPAutoScaling"
+    effect = "Allow"
+    actions = [
+      "application-autoscaling:*",
+    ]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "terraform_access_ecs_admin" {
