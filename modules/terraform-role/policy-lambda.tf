@@ -10,7 +10,13 @@ data "aws_iam_policy_document" "tf_lambda_admin" {
       "lambda:List*",
       "lambda:GetAccountSettings",
       "lambda:CreateEventSourceMapping",
-      "lambda:CreateCodeSigningConfig"
+      "lambda:GetEventSourceMapping",
+      "lambda:UpdateEventSourceMapping",
+      "lambda:DeleteEventSourceMapping",
+      "lambda:CreateCodeSigningConfig",
+      "lambda:UpdateCodeSigningConfig",
+      "lambda:GetCodeSigningConfig",
+      "lambda:DeleteCodeSigningConfig",
     ]
     resources = ["*"]
   }
@@ -23,7 +29,7 @@ data "aws_iam_policy_document" "tf_lambda_admin" {
       "lambda:*"
     ]
     resources = [
-      "arn:aws:iam::${var.account_id}:role/*",
+      "arn:aws:iam::${var.account_id}:role/*", # TODO: Restrict this further
       "arn:aws:lambda:*:${var.account_id}:function:*:*"
     ]
   }
