@@ -8,6 +8,7 @@
 # .tfvars files
 *.tfvars
 .tronador
+.tronador*.mk
 tronador
 
 .terraform.lock.hcl
