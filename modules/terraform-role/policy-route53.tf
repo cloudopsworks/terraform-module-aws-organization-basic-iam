@@ -66,6 +66,7 @@ resource "aws_iam_policy" "terraform_access_route53_admin" {
   count  = try(var.settings.route53, false) ? 1 : 0
   name   = "${var.default_terraform_role}-Route53-policy"
   policy = data.aws_iam_policy_document.tf_route53_admin[count.index].json
+  tags   = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "terraform_access_route53_admin" {

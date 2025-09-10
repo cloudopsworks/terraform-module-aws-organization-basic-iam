@@ -61,7 +61,7 @@ data "aws_iam_policy_document" "tf_ecs_admin" {
   }
 
   statement {
-    sid = "APPAutoScaling"
+    sid    = "APPAutoScaling"
     effect = "Allow"
     actions = [
       "application-autoscaling:*",
