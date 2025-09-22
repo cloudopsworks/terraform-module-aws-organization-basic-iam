@@ -19,6 +19,7 @@ module "tf_role" {
   default_terraform_user = var.default_terraform_user
   default_terraform_role = var.default_terraform_role
   secrets_manager_policy = var.secrets_manager_policy
+  allowed_pass_roles     = var.allowed_pass_roles
   settings               = var.settings
   tags                   = local.all_tags
 }

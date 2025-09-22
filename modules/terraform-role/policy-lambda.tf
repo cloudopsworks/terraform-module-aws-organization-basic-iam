@@ -28,10 +28,11 @@ data "aws_iam_policy_document" "tf_lambda_admin" {
       "iam:PassRole",
       "lambda:*"
     ]
-    resources = [
-      "arn:aws:iam::${var.account_id}:role/*", # TODO: Restrict this further
+    resources = concat([
       "arn:aws:lambda:*:${var.account_id}:function:*:*"
-    ]
+      ],
+      var.allowed_pass_roles
+    )
   }
 
   statement {

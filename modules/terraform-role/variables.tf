@@ -52,3 +52,9 @@ variable "secrets_manager_policy" {
   description = "Custom policy for Secrets Manager / Cross account"
   type        = any
 }
+
+variable "allowed_pass_roles" {
+  description = "List of ARNs that can be passed by the terraform role"
+  type        = list(string)
+  default     = []
+}

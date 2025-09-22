@@ -95,3 +95,9 @@ variable "settings" {
   type        = any
   default     = {}
 }
+
+variable "allowed_pass_roles" {
+  description = "(optional) List of ARNs that can be passed to services"
+  type        = list(string)
+  default     = []
+}
