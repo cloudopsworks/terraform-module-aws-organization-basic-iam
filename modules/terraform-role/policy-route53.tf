@@ -4,7 +4,7 @@ data "aws_iam_policy_document" "tf_route53_admin" {
   version = "2012-10-17"
 
   statement {
-    sid    = "Route53ReadAll"
+    sid    = "Route53ReadWriteAll"
     effect = "Allow"
     actions = [
       "route53:ChangeResourceRecordSets",
@@ -13,22 +13,8 @@ data "aws_iam_policy_document" "tf_route53_admin" {
       "route53:CreateHostedZone",
       "route53:CreateReusableDelegationSet",
       "route53:CreateTrafficPolicy",
-      "route53:GetAccountLimit",
-      "route53:GetCheckerIpRanges",
-      "route53:GetGeoLocation",
-      "route53:GetHealthCheckCount",
-      "route53:GetHostedZoneCount",
-      "route53:GetTrafficPolicyInstanceCount",
-      "route53:ListCidrCollections",
-      "route53:ListGeoLocations",
-      "route53:ListHealthChecks",
-      "route53:ListHostedZones",
-      "route53:ListHostedZonesByName",
-      "route53:ListHostedZonesByVPC",
-      "route53:ListResourceRecordSets",
-      "route53:ListReusableDelegationSets",
-      "route53:ListTrafficPolicies",
-      "route53:ListTrafficPolicyInstances",
+      "route53:Get*",
+      "route53:List*",
       "route53:TestDNSAnswer",
     ]
     resources = ["*"]
@@ -38,7 +24,29 @@ data "aws_iam_policy_document" "tf_route53_admin" {
     sid    = "Route53ResourceAdmin"
     effect = "Allow"
     actions = [
-      "route53:*"
+      "route53:AssociateVPCWithHostedZone",
+      "route53:ChangeTagsForResource",
+      "route53:CreateQueryLoggingConfig",
+      "route53:CreateTagsForResource",
+      "route53:CreateTrafficPolicyInstance",
+      "route53:DeleteCidrCollection",
+      "route53:DeleteHealthCheck",
+      "route53:DeleteHostedZone",
+      "route53:DeleteQueryLoggingConfig",
+      "route53:DeleteReusableDelegationSet",
+      "route53:DeleteTagsForResource",
+      "route53:DeleteTrafficPolicy",
+      "route53:DeleteTrafficPolicyInstance",
+      "route53:DisassociateVPCFromHostedZone",
+      "route53:ListTagsForResource",
+      "route53:TagResource",
+      "route53:UntagResource",
+      "route53:UpdateCidrCollection",
+      "route53:UpdateHealthCheck",
+      "route53:UpdateHostedZoneComment",
+      "route53:UpdateQueryLoggingConfig",
+      "route53:UpdateTrafficPolicyComment",
+      "route53:UpdateTrafficPolicyInstance",
     ]
     resources = [
       "arn:aws:route53:::hostedzone/*",
