@@ -4,14 +4,31 @@ data "aws_iam_policy_document" "tf_eks_admin" {
   count   = try(var.settings.eks, false) ? 1 : 0
   version = "2012-10-17"
   statement {
-    sid    = "EKSCreate"
+    sid    = "EKSCreateUpdateDelete"
     effect = "Allow"
     actions = [
       "eks:DescribeAddonConfiguration",
       "eks:ListClusters",
       "eks:DescribeAddonVersions",
       "eks:RegisterCluster",
-      "eks:CreateCluster"
+      "eks:CreateCluster",
+      "eks:DeleteCluster",
+      "eks:UpdateClusterConfig",
+      "eks:UpdateClusterVersion",
+      "eks:CreateAddon",
+      "eks:DeleteAddon",
+      "eks:UpdateAddon",
+      "eks:CreateFargateProfile",
+      "eks:DeleteFargateProfile",
+      "eks:CreateNodegroup",
+      "eks:DeleteNodegroup",
+      "eks:UpdateNodegroupConfig",
+      "eks:UpdateNodegroupVersion",
+      "eks:TagResource",
+      "eks:UntagResource",
+      "eks:CreateIdentityProviderConfig",
+      "eks:DeleteIdentityProviderConfig",
+      "eks:UpdateIdentityProviderConfig",
     ]
     resources = ["*"]
   }

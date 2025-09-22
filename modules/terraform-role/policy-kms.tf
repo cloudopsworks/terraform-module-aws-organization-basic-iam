@@ -7,7 +7,7 @@ data "aws_iam_policy_document" "tf_kms_admin" {
     sid    = "KMSAdmin"
     effect = "Allow"
     actions = [
-      "kms:DescribeCustomKeyStores",
+      "kms:Describe*",
       "kms:ListKeys",
       "kms:DeleteCustomKeyStore",
       "kms:GenerateRandom",
@@ -25,7 +25,23 @@ data "aws_iam_policy_document" "tf_kms_admin" {
     sid    = "KMSKeyAdmin"
     effect = "Allow"
     actions = [
-      "kms:*"
+      "kms:CancelKeyDeletion",
+      "kms:CreateAlias",
+      "kms:CreateGrant",
+      "kms:DeleteAlias",
+      "kms:DescribeKey",
+      "kms:DisableKey",
+      "kms:EnableKey",
+      "kms:GetKeyPolicy",
+      "kms:ListGrants",
+      "kms:ListKeyPolicies",
+      "kms:PutKeyPolicy",
+      "kms:RevokeGrant",
+      "kms:ScheduleKeyDeletion",
+      "kms:TagResource",
+      "kms:UntagResource",
+      "kms:UpdateAlias",
+      "kms:UpdateKeyDescription",
     ]
     resources = [
       "arn:aws:kms:*:${var.account_id}:key/*",
