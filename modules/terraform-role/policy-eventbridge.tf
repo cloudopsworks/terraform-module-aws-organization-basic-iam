@@ -43,6 +43,7 @@ data "aws_iam_policy_document" "tf_eventbridge_admin" {
       "events:Delete*",
       "events:TagResource",
       "events:UntagResource",
+      "events:Remove*",
       "events:AllowVendedLogDeliveryForResource",
     ]
     resources = ["*"]
