@@ -20,11 +20,11 @@ data "aws_iam_policy_document" "tf_eventbridge_admin" {
     sid    = "AllowAdminScheduleGroups"
     effect = "Allow"
     actions = [
-      "scheduler:ListScheduleGroups",
-      "scheduler:GetScheduleGroup",
-      "scheduler:CreateScheduleGroup",
-      "scheduler:DeleteScheduleGroup",
-      "scheduler:ListTagsForResource",
+      "scheduler:List*",
+      "scheduler:Get*",
+      "scheduler:Create*",
+      "scheduler:Delete*",
+      "scheduler:Describe*",
       "scheduler:TagResource",
       "scheduler:UntagResource"
     ]
@@ -39,9 +39,11 @@ data "aws_iam_policy_document" "tf_eventbridge_admin" {
       "events:Describe*",
       "events:Create*",
       "events:Put*",
+      "events:Get*",
       "events:Delete*",
       "events:TagResource",
-      "events:UntagResource"
+      "events:UntagResource",
+      "events:AllowVendedLogDeliveryForResource",
     ]
     resources = ["*"]
   }
