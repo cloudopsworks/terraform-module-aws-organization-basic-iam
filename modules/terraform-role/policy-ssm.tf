@@ -66,6 +66,7 @@ data "aws_iam_policy_document" "tf_ssm_store" {
       "ssm:ListDocumentVersions",
       "ssm:DescribeDocument",
       "ssm:DescribeDocumentPermission",
+      "ssm:UpdateDocumentDefaultVersion",
       "ssm:GetCalendarState",
       "ssm:PutCalendar",
       "ssm:GetCalendar",
