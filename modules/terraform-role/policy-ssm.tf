@@ -58,15 +58,13 @@ data "aws_iam_policy_document" "tf_ssm_store" {
     sid    = "SSMDocumentsAndChangeCalendar"
     effect = "Allow"
     actions = [
-      "ssm:CreateDocument",
-      "ssm:UpdateDocument",
-      "ssm:DeleteDocument",
-      "ssm:GetDocument",
+      "ssm:CreateDocument*",
+      "ssm:UpdateDocument*",
+      "ssm:DeleteDocument*",
+      "ssm:GetDocument*",
       "ssm:ListDocuments",
-      "ssm:ListDocumentVersions",
-      "ssm:DescribeDocument",
-      "ssm:DescribeDocumentPermission",
-      "ssm:UpdateDocumentDefaultVersion",
+      "ssm:ListDocument*",
+      "ssm:DescribeDocument*",
       "ssm:GetCalendarState",
       "ssm:PutCalendar",
       "ssm:GetCalendar",
