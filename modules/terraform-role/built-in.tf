@@ -6,7 +6,7 @@
 ## -- Built In Policies
 
 data "aws_iam_policy" "apig_admin" {
-  count = try(var.settings.api_gateway, false) ? 1 : 0
+  count = try(var.settings.api_gateway, var.settings.apigateway, false) ? 1 : 0
   name  = "AmazonAPIGatewayAdministrator"
 }
 
@@ -36,7 +36,7 @@ data "aws_iam_policy" "acm_full" {
 }
 
 resource "aws_iam_role_policy_attachment" "tf_apig_admin" {
-  count      = try(var.settings.api_gateway, false) ? 1 : 0
+  count      = try(var.settings.api_gateway, var.settings.apigateway, false) ? 1 : 0
   role       = aws_iam_role.terraform_access.name
   policy_arn = data.aws_iam_policy.apig_admin[count.index].arn
 }
