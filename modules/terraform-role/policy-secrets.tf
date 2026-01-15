@@ -1,6 +1,6 @@
 # Secrets Manager Reader Policy
 data "aws_iam_policy_document" "tf_secrets_reader" {
-  count   = try(var.settings.secrets_manager, false) ? 1 : 0
+  count   = try(var.settings.secrets_manager, var.settings.secretsmanager, false) ? 1 : 0
   version = "2012-10-17"
 
   statement {
@@ -37,7 +37,7 @@ data "aws_iam_policy_document" "tf_secrets_reader" {
 
 # Secrets Manager Reader Policy
 data "aws_iam_policy_document" "tf_secrets_admin" {
-  count   = try(var.settings.secrets_manager, false) ? 1 : 0
+  count   = try(var.settings.secrets_manager, var.settings.secretsmanager, false) ? 1 : 0
   version = "2012-10-17"
 
   statement {
