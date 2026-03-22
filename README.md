@@ -67,6 +67,7 @@ Available targets:
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.4 |
 
 ## Providers
 
@@ -89,6 +90,7 @@ No resources.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_account_id"></a> [account\_id](#input\_account\_id) | n/a | `string` | n/a | yes |
+| <a name="input_allowed_pass_roles"></a> [allowed\_pass\_roles](#input\_allowed\_pass\_roles) | (optional) List of ARNs that can be passed to services | `list(string)` | `[]` | no |
 | <a name="input_default_terraform_role"></a> [default\_terraform\_role](#input\_default\_terraform\_role) | Default Terraform role for the account | `string` | `"terraform-access-role"` | no |
 | <a name="input_default_terraform_user"></a> [default\_terraform\_user](#input\_default\_terraform\_user) | Default Terraform user for the account | `string` | `"terraform-access"` | no |
 | <a name="input_extra_tags"></a> [extra\_tags](#input\_extra\_tags) | n/a | `map(string)` | `{}` | no |
