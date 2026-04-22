@@ -3,10 +3,13 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.35 |
 
 ## Providers
 
-No providers.
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.41.0 |
 
 ## Modules
 
@@ -18,22 +21,27 @@ No providers.
 
 ## Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_account_id"></a> [account\_id](#input\_account\_id) | n/a | `string` | n/a | yes |
+| <a name="input_account_id"></a> [account\_id](#input\_account\_id) | AWS Account ID | `string` | n/a | yes |
+| <a name="input_allowed_pass_roles"></a> [allowed\_pass\_roles](#input\_allowed\_pass\_roles) | List of ARNs that can be passed to services | `list(string)` | `[]` | no |
 | <a name="input_default_terraform_role"></a> [default\_terraform\_role](#input\_default\_terraform\_role) | Default Terraform role for the account | `string` | `"terraform-access-role"` | no |
 | <a name="input_default_terraform_user"></a> [default\_terraform\_user](#input\_default\_terraform\_user) | Default Terraform user for the account | `string` | `"terraform-access"` | no |
-| <a name="input_extra_tags"></a> [extra\_tags](#input\_extra\_tags) | n/a | `map(string)` | `{}` | no |
-| <a name="input_is_org"></a> [is\_org](#input\_is\_org) | n/a | `bool` | `false` | no |
-| <a name="input_org"></a> [org](#input\_org) | n/a | <pre>object({<br/>    organization_name = string<br/>    organization_unit = string<br/>    environment_type  = string<br/>    environment_name  = string<br/>  })</pre> | n/a | yes |
-| <a name="input_organization_id"></a> [organization\_id](#input\_organization\_id) | n/a | `string` | `""` | no |
-| <a name="input_parent_account_id"></a> [parent\_account\_id](#input\_parent\_account\_id) | n/a | `string` | `""` | no |
+| <a name="input_extra_tags"></a> [extra\_tags](#input\_extra\_tags) | Extra tags to add to the resources | `map(string)` | `{}` | no |
+| <a name="input_is_hub"></a> [is\_hub](#input\_is\_hub) | Is this a hub or spoke configuration? | `bool` | `false` | no |
+| <a name="input_is_org"></a> [is\_org](#input\_is\_org) | Is this an organization-level configuration | `bool` | `false` | no |
+| <a name="input_org"></a> [org](#input\_org) | Organization details | <pre>object({<br/>    organization_name = string<br/>    organization_unit = string<br/>    environment_type  = string<br/>    environment_name  = string<br/>  })</pre> | n/a | yes |
+| <a name="input_organization_id"></a> [organization\_id](#input\_organization\_id) | AWS Organization ID | `string` | `""` | no |
+| <a name="input_parent_account_id"></a> [parent\_account\_id](#input\_parent\_account\_id) | Parent account ID | `string` | `""` | no |
 | <a name="input_secrets_manager_policy"></a> [secrets\_manager\_policy](#input\_secrets\_manager\_policy) | Custom policy for Secrets Manager / Cross account | `any` | `{}` | no |
-| <a name="input_settings"></a> [settings](#input\_settings) | Map for policy settings | `any` | `{}` | no |
+| <a name="input_settings"></a> [settings](#input\_settings) | Map of AWS service policy toggles. Each key enables admin-level policy for that service. | `any` | `{}` | no |
+| <a name="input_spoke_def"></a> [spoke\_def](#input\_spoke\_def) | Spoke ID Number, must be a 3 digit number | `string` | `"001"` | no |
 | <a name="input_trust_accounts_arns"></a> [trust\_accounts\_arns](#input\_trust\_accounts\_arns) | List of trust account ARNs | `list(string)` | `[]` | no |
 
 ## Outputs

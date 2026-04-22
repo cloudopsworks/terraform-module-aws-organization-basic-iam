@@ -10,21 +10,216 @@ copyrights:
 
 github_repo: cloudopsworks/terraform-module-aws-organization-basic-iam
 
+badges:
+  - name: Latest Release
+    image: https://img.shields.io/github/release/cloudopsworks/terraform-module-aws-organization-basic-iam.svg?style=for-the-badge
+    url: https://github.com/cloudopsworks/terraform-module-aws-organization-basic-iam/releases/latest
+  - name: Last Updated
+    image: https://img.shields.io/github/last-commit/cloudopsworks/terraform-module-aws-organization-basic-iam.svg?style=for-the-badge
+    url: https://github.com/cloudopsworks/terraform-module-aws-organization-basic-iam/commits
+
 description: |-
   Organizations Module for AWS organization management.
 
-# Introduction to the project
-#introduction: |-
-#  This is an introduction.
+introduction: |-
+  This Terraform module provides comprehensive IAM setup for AWS Organizations, including:
+  
+  - **Terraform Access Role**: Creates IAM roles and users for Terraform-based infrastructure management
+  - **Account Policies**: Implements Service Control Policies (SCPs) for governance
+  - **Granular Policy Control**: Enable/disable admin policies for 40+ AWS services via settings map
+  - **Cross-Account Access**: Support for trust relationships and secrets manager cross-account policies
+  - **Organization-Wide Security**: Optional policies for Security Hub, GuardDuty, Macie, and other security services
+  
+  The module is designed for multi-account AWS Organizations environments with hub-and-spoke architecture support.
 
-# How to use this project
-#usage: |-
+usage: |-
+  ### Terragrunt Scaffolding Workflow
 
-# Example usage
-#examples: |-
+  This module supports Terragrunt's built-in scaffold command for quick deployment setup.
 
-# How to get started quickly
-#quickstart: |-
+  ```sh
+  # 1. Create and enter the target deployment directory
+  mkdir -p production/us-east-1/shared-services/organization-basic-iam
+  cd production/us-east-1/shared-services/organization-basic-iam
+
+  # 2. Scaffold the module (do NOT use --working-dir)
+  terragrunt scaffold github.com/cloudopsworks/terraform-module-aws-organization-basic-iam
+
+  # 3. Edit inputs.yaml with deployment-specific values
+  #    (all keys and comments are pre-populated from .boilerplate/inputs.yaml)
+  vi inputs.yaml
+
+  # 4. Apply
+  terragrunt apply
+  ```
+
+  ### Generated Configuration Files
+
+  After scaffolding, you'll have:
+
+  **`inputs.yaml`** - Your deployment configuration:
+
+  ```yaml
+  # (Required) Organization details
+  org:
+    organization_name: "acme"          # (Required) The name of the organization
+    organization_unit: "platform"      # (Required) The unit within the organization
+    environment_type: "production"     # (Required) The type of environment
+    environment_name: "prod"           # (Required) The name of the environment
+
+  # (Required) AWS Account ID
+  account_id: "123456789012"
+
+  # (Optional) Enable specific admin policies
+  settings:
+    iam: true                          # Enable IAM full access policy
+    cloudtrail: true                   # Enable CloudTrail admin policy
+    guardduty: true                    # Enable GuardDuty admin policy
+    security_hub: true                 # Enable Security Hub admin policy
+    s3: false                          # Disable S3 admin policy
+    # ... 40+ more service toggles available
+  ```
+
+  **`terragrunt.hcl`** - Generated Terragrunt configuration:
+
+  ```hcl
+  terraform {
+    source = "github.com/cloudopsworks/terraform-module-aws-organization-basic-iam"
+  }
+
+  locals {
+    local_vars = yamldecode(file("inputs.yaml"))
+  }
+
+  inputs = {
+    org                   = local.local_vars.org
+    account_id            = local.local_vars.account_id
+    settings              = local.local_vars.settings
+    # ... other variables
+  }
+  ```
+
+examples: |-
+  ### Example 1: Basic Organization Setup
+
+  ```yaml
+  # inputs.yaml
+  org:
+    organization_name: "myorg"
+    organization_unit: "engineering"
+    environment_type: "production"
+    environment_name: "prod"
+
+  account_id: "123456789012"
+
+  # Enable core security services
+  settings:
+    iam: true
+    cloudtrail: true
+    config: true
+    guardduty: true
+    security_hub: true
+  ```
+
+  ### Example 2: Full Admin Access for Platform Account
+
+  ```yaml
+  # inputs.yaml
+  org:
+    organization_name: "acme"
+    organization_unit: "platform"
+    environment_type: "production"
+    environment_name: "prod"
+
+  account_id: "999888777666"
+
+  # Enable comprehensive admin policies
+  settings:
+    # Core Services
+    iam: true
+    s3: true
+    ec2: true
+    vpc: true
+    rds: true
+    lambda: true
+    kms: true
+    
+    # Security & Compliance
+    cloudtrail: true
+    config: true
+    guardduty: true
+    macie2: true
+    security_hub: true
+    access_analyzer: true
+    
+    # Networking
+    route53: true
+    cloudfront: true
+    api_gateway: true
+    
+    # Management
+    cloudwatch: true
+    eventbridge: true
+    ssm: true
+  ```
+
+  ### Example 3: Organization-Wide Security Policies
+
+  ```yaml
+  # inputs.yaml - For management account
+  org:
+    organization_name: "acme"
+    organization_unit: "security"
+    environment_type: "production"
+    environment_name: "prod"
+
+  account_id: "111222333444"
+  is_org: true
+
+  # Enable organization-level security policies
+  settings:
+    security_hub_org: true      # Security Hub organization admin
+    guardduty: true             # GuardDuty organization admin
+    macie2: true                # Macie organization admin
+    detective_org: true         # Detective organization admin
+    resource_explorer_org: true # Resource Explorer organization admin
+    devopsguru_org: true        # DevOps Guru organization admin
+  ```
+
+quickstart: |-
+  ### Quick Start (5 minutes)
+
+  1. **Prerequisites**:
+     - Terraform >= 1.3
+     - Terragrunt (recommended)
+     - AWS CLI configured with organization management credentials
+
+  2. **Clone and Initialize**:
+     ```sh
+     git clone https://github.com/cloudopsworks/terraform-module-aws-organization-basic-iam.git
+     cd terraform-module-aws-organization-basic-iam
+     ```
+
+  3. **Deploy with Terragrunt**:
+     ```sh
+     # Create deployment directory
+     mkdir -p myorg/production/shared/iam
+     cd myorg/production/shared/iam
+
+     # Scaffold
+     terragrunt scaffold github.com/cloudopsworks/terraform-module-aws-organization-basic-iam
+
+     # Configure
+     vi inputs.yaml  # Set your org details and account_id
+
+     # Apply
+     terragrunt apply
+     ```
+
+  4. **Verify**:
+     - Check AWS IAM Console for `terraform-access-role`
+     - Verify CloudTrail trails are created (if enabled)
+     - Confirm Security Hub is enabled (if enabled)
 
 include:
   - "docs/targets.md"
