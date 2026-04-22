@@ -1,0 +1,93 @@
+##
+# (c) 2021-2026
+#     Cloud Ops Works LLC - https://cloudops.works/
+#     Find us on:
+#       GitHub: https://github.com/cloudopsworks
+#       WebSite: https://cloudops.works
+#     Distributed Under Apache v2.0 License
+#
+
+variable "account_id" {
+  type = string
+}
+
+variable "parent_account_id" {
+  type    = string
+  default = ""
+}
+
+
+variable "is_org" {
+  type    = bool
+  default = false
+}
+
+variable "organization_id" {
+  type    = string
+  default = ""
+}
+
+variable "trust_accounts_arns" {
+  description = "List of trust account ARNs"
+  type        = list(string)
+  default     = []
+}
+
+variable "default_terraform_user" {
+  description = "Default Terraform user for the account"
+  type        = string
+  default     = "terraform-access"
+}
+
+variable "default_terraform_role" {
+  description = "Default Terraform role for the account"
+  type        = string
+  default     = "terraform-access-role"
+}
+
+variable "secrets_manager_policy" {
+  description = "Custom policy for Secrets Manager / Cross account"
+  type        = any
+  default     = {}
+}
+
+## YAML Sample
+# settings:
+#   s3: true | false # Defaults to false
+#   api_gateway: true | false # Defaults to false
+#   cognito: true | false # Defaults to false
+#   ec2: true | false # Defaults to false
+#   rds: true | false # Defaults to false
+#   vpc: true | false # Defaults to false
+#   acm: true | false # Defaults to false
+#   sso: true | false # Defaults to false
+#   ssm: true | false # Defaults to false
+#   sqs: true | false # Defaults to false
+#   sns: true | false # Defaults to false
+#   ses: true | false # Defaults to false
+#   lambda: true | false # Defaults to false
+#   secrets_manager: true | false # Defaults to false
+#   iam: true | false # Defaults to false
+#   cloudwatch: true | false # Defaults to false
+#   eks: true | false # Defaults to false
+#   ram: true | false # Defaults to false
+#   route53: true | false # Defaults to false
+#   kms: true | false # Defaults to false
+#   iam: true | false # Defaults to false
+#   eventbridge: true | false # Defaults to false
+#   elastic_beanstalk: true | false # Defaults to false
+#   dynamodb: true | false # Defaults to false
+#   cloudfront: true | false # Defaults to false
+#   awschatbot: true | false # Defaults to false
+#   awsbackup: true | false # Defaults to false
+variable "settings" {
+  description = "Map for policy settings"
+  type        = any
+  default     = {}
+}
+
+variable "allowed_pass_roles" {
+  description = "(optional) List of ARNs that can be passed to services"
+  type        = list(string)
+  default     = []
+}
