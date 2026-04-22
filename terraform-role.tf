@@ -3,12 +3,7 @@
 #            On GitHub: https://github.com/cloudopsworks
 #            Distributed Under Apache v2.0 License
 #
-locals {
-  all_tags = merge(
-    var.extra_tags,
-    module.tags.locals.common_tags
-  )
-}
+
 module "tf_role" {
   source                 = "./modules/terraform-role"
   is_org                 = var.is_org
