@@ -8,11 +8,11 @@
   -->
 [![README Header][readme_header_img]][readme_header_link]
 
-[![cloudopsworks][logo]](https://cloudops.works/)
+[![cloudopsworks][logo]](https://cloudopsworks.co/)
 
 # Terraform Organizations Basic IAM Setup Module
 
-
+ [![Latest Release](https://img.shields.io/github/release/cloudopsworks/terraform-module-aws-organization-basic-iam.svg?style=for-the-badge)](https://github.com/cloudopsworks/terraform-module-aws-organization-basic-iam/releases/latest) [![Last Updated](https://img.shields.io/github/last-commit/cloudopsworks/terraform-module-aws-organization-basic-iam.svg?style=for-the-badge)](https://github.com/cloudopsworks/terraform-module-aws-organization-basic-iam/commits)
 
 
 Organizations Module for AWS organization management.
@@ -22,13 +22,10 @@ Organizations Module for AWS organization management.
 
 This project is part of our comprehensive approach towards DevOps Acceleration. 
 [<img align="right" title="Share via Email" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/ios-mail.svg"/>][share_email]
-[<img align="right" title="Share on Google+" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-googleplus.svg" />][share_googleplus]
 [<img align="right" title="Share on Facebook" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-facebook.svg" />][share_facebook]
 [<img align="right" title="Share on Reddit" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-reddit.svg" />][share_reddit]
 [<img align="right" title="Share on LinkedIn" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-linkedin.svg" />][share_linkedin]
-[<img align="right" title="Share on Twitter" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-twitter.svg" />][share_twitter]
-
-
+[<img align="right" title="Share on X" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-twitter.svg" />][share_twitter]
 
 
 It's 100% Open Source and licensed under the [APACHE2](LICENSE).
@@ -44,10 +41,212 @@ It's 100% Open Source and licensed under the [APACHE2](LICENSE).
 
 
 
+## Introduction
+
+This Terraform module provides comprehensive IAM setup for AWS Organizations, including:
+
+- **Terraform Access Role**: Creates IAM roles and users for Terraform-based infrastructure management
+- **Account Policies**: Implements Service Control Policies (SCPs) for governance
+- **Granular Policy Control**: Enable/disable admin policies for 40+ AWS services via settings map
+- **Cross-Account Access**: Support for trust relationships and secrets manager cross-account policies
+- **Organization-Wide Security**: Optional policies for Security Hub, GuardDuty, Macie, and other security services
+
+The module is designed for multi-account AWS Organizations environments with hub-and-spoke architecture support.
+
+## Usage
 
 
 
+### Terragrunt Scaffolding Workflow
 
+This module supports Terragrunt's built-in scaffold command for quick deployment setup.
+
+```sh
+# 1. Create and enter the target deployment directory
+mkdir -p production/us-east-1/shared-services/organization-basic-iam
+cd production/us-east-1/shared-services/organization-basic-iam
+
+# 2. Scaffold the module (do NOT use --working-dir)
+terragrunt scaffold github.com/cloudopsworks/terraform-module-aws-organization-basic-iam
+
+# 3. Edit inputs.yaml with deployment-specific values
+#    (all keys and comments are pre-populated from .boilerplate/inputs.yaml)
+vi inputs.yaml
+
+# 4. Apply
+terragrunt apply
+```
+
+### Generated Configuration Files
+
+After scaffolding, you'll have:
+
+**`inputs.yaml`** - Your deployment configuration:
+
+```yaml
+# (Required) Organization details
+org:
+  organization_name: "acme"          # (Required) The name of the organization
+  organization_unit: "platform"      # (Required) The unit within the organization
+  environment_type: "production"     # (Required) The type of environment
+  environment_name: "prod"           # (Required) The name of the environment
+
+# (Required) AWS Account ID
+account_id: "123456789012"
+
+# (Optional) Enable specific admin policies
+settings:
+  iam: true                          # Enable IAM full access policy
+  cloudtrail: true                   # Enable CloudTrail admin policy
+  guardduty: true                    # Enable GuardDuty admin policy
+  security_hub: true                 # Enable Security Hub admin policy
+  s3: false                          # Disable S3 admin policy
+  # ... 40+ more service toggles available
+```
+
+**`terragrunt.hcl`** - Generated Terragrunt configuration:
+
+```hcl
+terraform {
+  source = "github.com/cloudopsworks/terraform-module-aws-organization-basic-iam"
+}
+
+locals {
+  local_vars = yamldecode(file("inputs.yaml"))
+}
+
+inputs = {
+  org                   = local.local_vars.org
+  account_id            = local.local_vars.account_id
+  settings              = local.local_vars.settings
+  # ... other variables
+}
+```
+
+## Quick Start
+
+### Quick Start (5 minutes)
+
+1. **Prerequisites**:
+   - Terraform >= 1.3
+   - Terragrunt (recommended)
+   - AWS CLI configured with organization management credentials
+
+2. **Clone and Initialize**:
+   ```sh
+   git clone https://github.com/cloudopsworks/terraform-module-aws-organization-basic-iam.git
+   cd terraform-module-aws-organization-basic-iam
+   ```
+
+3. **Deploy with Terragrunt**:
+   ```sh
+   # Create deployment directory
+   mkdir -p myorg/production/shared/iam
+   cd myorg/production/shared/iam
+
+   # Scaffold
+   terragrunt scaffold github.com/cloudopsworks/terraform-module-aws-organization-basic-iam
+
+   # Configure
+   vi inputs.yaml  # Set your org details and account_id
+
+   # Apply
+   terragrunt apply
+   ```
+
+4. **Verify**:
+   - Check AWS IAM Console for `terraform-access-role`
+   - Verify CloudTrail trails are created (if enabled)
+   - Confirm Security Hub is enabled (if enabled)
+
+
+## Examples
+
+### Example 1: Basic Organization Setup
+
+```yaml
+# inputs.yaml
+org:
+  organization_name: "myorg"
+  organization_unit: "engineering"
+  environment_type: "production"
+  environment_name: "prod"
+
+account_id: "123456789012"
+
+# Enable core security services
+settings:
+  iam: true
+  cloudtrail: true
+  config: true
+  guardduty: true
+  security_hub: true
+```
+
+### Example 2: Full Admin Access for Platform Account
+
+```yaml
+# inputs.yaml
+org:
+  organization_name: "acme"
+  organization_unit: "platform"
+  environment_type: "production"
+  environment_name: "prod"
+
+account_id: "999888777666"
+
+# Enable comprehensive admin policies
+settings:
+  # Core Services
+  iam: true
+  s3: true
+  ec2: true
+  vpc: true
+  rds: true
+  lambda: true
+  kms: true
+  
+  # Security & Compliance
+  cloudtrail: true
+  config: true
+  guardduty: true
+  macie2: true
+  security_hub: true
+  access_analyzer: true
+  
+  # Networking
+  route53: true
+  cloudfront: true
+  api_gateway: true
+  
+  # Management
+  cloudwatch: true
+  eventbridge: true
+  ssm: true
+```
+
+### Example 3: Organization-Wide Security Policies
+
+```yaml
+# inputs.yaml - For management account
+org:
+  organization_name: "acme"
+  organization_unit: "security"
+  environment_type: "production"
+  environment_name: "prod"
+
+account_id: "111222333444"
+is_org: true
+
+# Enable organization-level security policies
+settings:
+  security_hub_org: true      # Security Hub organization admin
+  guardduty: true             # GuardDuty organization admin
+  macie2: true                # Macie organization admin
+  detective_org: true         # Detective organization admin
+  resource_explorer_org: true # Resource Explorer organization admin
+  devopsguru_org: true        # DevOps Guru organization admin
+```
 
 
 
@@ -58,6 +257,7 @@ Available targets:
   help                                Help screen
   help/all                            Display help for all targets
   help/short                          This help short screen
+  init/%                              Initialize the project for a specific cloud provider: %S
   lint                                Lint terraform/opentofu code
   tag                                 Tag the current version
 
@@ -67,10 +267,13 @@ Available targets:
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.35 |
 
 ## Providers
 
-No providers.
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.41.0 |
 
 ## Modules
 
@@ -82,22 +285,27 @@ No providers.
 
 ## Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_account_id"></a> [account\_id](#input\_account\_id) | n/a | `string` | n/a | yes |
+| <a name="input_account_id"></a> [account\_id](#input\_account\_id) | AWS Account ID | `string` | n/a | yes |
+| <a name="input_allowed_pass_roles"></a> [allowed\_pass\_roles](#input\_allowed\_pass\_roles) | List of ARNs that can be passed to services | `list(string)` | `[]` | no |
 | <a name="input_default_terraform_role"></a> [default\_terraform\_role](#input\_default\_terraform\_role) | Default Terraform role for the account | `string` | `"terraform-access-role"` | no |
 | <a name="input_default_terraform_user"></a> [default\_terraform\_user](#input\_default\_terraform\_user) | Default Terraform user for the account | `string` | `"terraform-access"` | no |
-| <a name="input_extra_tags"></a> [extra\_tags](#input\_extra\_tags) | n/a | `map(string)` | `{}` | no |
-| <a name="input_is_org"></a> [is\_org](#input\_is\_org) | n/a | `bool` | `false` | no |
-| <a name="input_org"></a> [org](#input\_org) | n/a | <pre>object({<br/>    organization_name = string<br/>    organization_unit = string<br/>    environment_type  = string<br/>    environment_name  = string<br/>  })</pre> | n/a | yes |
-| <a name="input_organization_id"></a> [organization\_id](#input\_organization\_id) | n/a | `string` | `""` | no |
-| <a name="input_parent_account_id"></a> [parent\_account\_id](#input\_parent\_account\_id) | n/a | `string` | `""` | no |
+| <a name="input_extra_tags"></a> [extra\_tags](#input\_extra\_tags) | Extra tags to add to the resources | `map(string)` | `{}` | no |
+| <a name="input_is_hub"></a> [is\_hub](#input\_is\_hub) | Is this a hub or spoke configuration? | `bool` | `false` | no |
+| <a name="input_is_org"></a> [is\_org](#input\_is\_org) | Is this an organization-level configuration | `bool` | `false` | no |
+| <a name="input_org"></a> [org](#input\_org) | Organization details | <pre>object({<br/>    organization_name = string<br/>    organization_unit = string<br/>    environment_type  = string<br/>    environment_name  = string<br/>  })</pre> | n/a | yes |
+| <a name="input_organization_id"></a> [organization\_id](#input\_organization\_id) | AWS Organization ID | `string` | `""` | no |
+| <a name="input_parent_account_id"></a> [parent\_account\_id](#input\_parent\_account\_id) | Parent account ID | `string` | `""` | no |
 | <a name="input_secrets_manager_policy"></a> [secrets\_manager\_policy](#input\_secrets\_manager\_policy) | Custom policy for Secrets Manager / Cross account | `any` | `{}` | no |
-| <a name="input_settings"></a> [settings](#input\_settings) | Map for policy settings | `any` | `{}` | no |
+| <a name="input_settings"></a> [settings](#input\_settings) | Map of AWS service policy toggles. Each key enables admin-level policy for that service. | `any` | `{}` | no |
+| <a name="input_spoke_def"></a> [spoke\_def](#input\_spoke\_def) | Spoke ID Number, must be a 3 digit number | `string` | `"001"` | no |
 | <a name="input_trust_accounts_arns"></a> [trust\_accounts\_arns](#input\_trust\_accounts\_arns) | List of trust account ARNs | `list(string)` | `[]` | no |
 
 ## Outputs
@@ -114,10 +322,9 @@ No resources.
 
 File a GitHub [issue](https://github.com/cloudopsworks/terraform-module-aws-organization-basic-iam/issues), send us an [email][email] or join our [Slack Community][slack].
 
-[![README Commercial Support][readme_commercial_support_img]][readme_commercial_support_link]
 
 ## DevOps Tools
-
+[]()
 ## Slack Community
 
 
@@ -138,7 +345,7 @@ Please use the [issue tracker](https://github.com/cloudopsworks/terraform-module
 
 ## Copyrights
 
-Copyright © 2024-2025 [Cloud Ops Works LLC](https://cloudops.works)
+Copyright © 2024-2026 [Cloud Ops Works LLC](https://cloudops.works)
 
 
 
@@ -195,32 +402,31 @@ This project is maintained by [Cloud Ops Works LLC][website].
 [![README Footer][readme_footer_img]][readme_footer_link]
 [![Beacon][beacon]][website]
 
-  [logo]: https://cloudops.works/logo-300x69.svg
-  [docs]: https://cowk.io/docs?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=docs
-  [website]: https://cowk.io/homepage?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=website
-  [github]: https://cowk.io/github?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=github
-  [jobs]: https://cowk.io/jobs?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=jobs
-  [hire]: https://cowk.io/hire?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=hire
-  [slack]: https://cowk.io/slack?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=slack
-  [linkedin]: https://cowk.io/linkedin?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=linkedin
-  [twitter]: https://cowk.io/twitter?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=twitter
-  [testimonial]: https://cowk.io/leave-testimonial?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=testimonial
-  [office_hours]: https://cloudops.works/office-hours?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=office_hours
-  [newsletter]: https://cowk.io/newsletter?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=newsletter
-  [email]: https://cowk.io/email?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=email
-  [commercial_support]: https://cowk.io/commercial-support?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=commercial_support
-  [we_love_open_source]: https://cowk.io/we-love-open-source?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=we_love_open_source
-  [terraform_modules]: https://cowk.io/terraform-modules?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=terraform_modules
-  [readme_header_img]: https://cloudops.works/readme/header/img
-  [readme_header_link]: https://cloudops.works/readme/header/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=readme_header_link
-  [readme_footer_img]: https://cloudops.works/readme/footer/img
-  [readme_footer_link]: https://cloudops.works/readme/footer/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=readme_footer_link
-  [readme_commercial_support_img]: https://cloudops.works/readme/commercial-support/img
-  [readme_commercial_support_link]: https://cloudops.works/readme/commercial-support/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=readme_commercial_support_link
-  [share_twitter]: https://twitter.com/intent/tweet/?text=Terraform+Organizations+Basic+IAM+Setup+Module&url=https://github.com/cloudopsworks/terraform-module-aws-organization-basic-iam
+  [logo]: https://cloudopsworks.co/images/main-logo.png
+  [docs]: https://cloudopsworks.co/resources?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=docs
+  [website]: https://cloudopsworks.co?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=website
+  [github]: https://cloudopsworks.co/github?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=github
+  [jobs]: https://cloudopsworks.co/jobs?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=jobs
+  [hire]: https://cloudopsworks.co/hire?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=hire
+  [slack]: https://cloudopsworks.co/slack?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=slack
+  [linkedin]: https://cloudopsworks.co/linkedin?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=linkedin
+  [x]: https://cloudopsworks.co/x?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=x
+  [testimonial]: https://cloudopsworks.co/case-studies?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=testimonial
+  [office_hours]: https://cloudopsworks.co/office-hours?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=office_hours
+  [newsletter]: https://cloudopsworks.co/resources?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=newsletter
+  [email]: https://cloudopsworks.co/contact?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=email
+  [commercial_support]: https://cloudopsworks.co/services?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=commercial_support
+  [we_love_open_source]: https://cloudopsworks.co/open-source?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=we_love_open_source
+  [terraform_modules]: https://cloudopsworks.co/open-source?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=terraform_modules
+  [readme_header_img]: https://cloudopsworks.co/images/readme-header.png
+  [readme_header_link]: https://cloudopsworks.co/readme/header/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=readme_header_link
+  [readme_footer_img]: https://cloudopsworks.co/images/main-logo-footer.png
+  [readme_footer_link]: https://cloudopsworks.co/readme/footer/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=readme_footer_link
+  [readme_commercial_support_img]: https://cloudopsworks.co/readme/commercial-support/img
+  [readme_commercial_support_link]: https://cloudopsworks.co/readme/commercial-support/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/terraform-module-aws-organization-basic-iam&utm_content=readme_commercial_support_link
+  [share_twitter]: https://x.com/intent/tweet/?text=Terraform+Organizations+Basic+IAM+Setup+Module&url=https://github.com/cloudopsworks/terraform-module-aws-organization-basic-iam
   [share_linkedin]: https://www.linkedin.com/shareArticle?mini=true&title=Terraform+Organizations+Basic+IAM+Setup+Module&url=https://github.com/cloudopsworks/terraform-module-aws-organization-basic-iam
   [share_reddit]: https://reddit.com/submit/?url=https://github.com/cloudopsworks/terraform-module-aws-organization-basic-iam
   [share_facebook]: https://facebook.com/sharer/sharer.php?u=https://github.com/cloudopsworks/terraform-module-aws-organization-basic-iam
-  [share_googleplus]: https://plus.google.com/share?url=https://github.com/cloudopsworks/terraform-module-aws-organization-basic-iam
   [share_email]: mailto:?subject=Terraform+Organizations+Basic+IAM+Setup+Module&body=https://github.com/cloudopsworks/terraform-module-aws-organization-basic-iam
-  [beacon]: https://ga-beacon.cloudops.works/G-7XWMFVFXZT/cloudopsworks/terraform-module-aws-organization-basic-iam?pixel&cs=github&cm=readme&an=terraform-module-aws-organization-basic-iam
+  [beacon]: https://ga-beacon.cloudospworks.co/G-QMZVYYN2VN/cloudopsworks/terraform-module-aws-organization-basic-iam?pixel&cs=github&cm=readme&an=terraform-module-aws-organization-basic-iam

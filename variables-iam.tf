@@ -1,55 +1,84 @@
-# Module configuration
+##
+# (c) 2021-2026
+#     Cloud Ops Works LLC - https://cloudops.works/
+#     Find us on:
+#       GitHub: https://github.com/cloudopsworks
+#       WebSite: https://cloudops.works
+#     Distributed Under Apache v2.0 License
+#
 
-# (Required) Organization details
-org:
-  organization_name: "example"       # (Required) The name of the organization
-  organization_unit: "devops"        # (Required) The unit within the organization
-  environment_type: "production"     # (Required) The type of environment (e.g., production, staging)
-  environment_name: "prod"           # (Required) The name of the environment
+# account_id: "123456789012" # (Required) AWS Account ID
+variable "account_id" {
+  description = "AWS Account ID"
+  type        = string
+}
 
-# (Optional) Extra tags to add to the resources. Default: {}
-# extra_tags:
-#   Environment: "production"
-#   Team: "devops"
+# parent_account_id: "" # (Optional) Parent account ID. Default: ""
+variable "parent_account_id" {
+  description = "Parent account ID"
+  type        = string
+  default     = ""
+}
 
-# (Optional) Is this a hub or spoke configuration? Default: false
-# is_hub: false
 
-# (Optional) Spoke ID Number, must be a 3 digit number. Default: "001"
-# spoke_def: "001"
+# is_org: false # (Optional) Is this an organization-level configuration? Default: false
+# is_org: false # (Optional) Is this an organization-level configuration? Default: false
+variable "is_org" {
+  description = "Is this an organization-level configuration"
+  type        = bool
+  default     = false
+}
 
-# (Required) AWS Account ID
-account_id: "123456789012"
+# organization_id: "o-xxxxxxxxxx" # (Optional) AWS Organization ID. Default: ""
+# organization_id: "o-xxxxxxxxxx" # (Optional) AWS Organization ID. Default: ""
+variable "organization_id" {
+  description = "AWS Organization ID"
+  type        = string
+  default     = ""
+}
 
-# (Optional) Parent account ID. Default: ""
-# parent_account_id: ""
-
-# (Optional) Is this an organization-level configuration? Default: false
-# is_org: false
-
-# (Optional) AWS Organization ID. Default: ""
-# organization_id: "o-xxxxxxxxxx"
-
-# (Optional) List of trust account ARNs. Default: []
-# trust_accounts_arns:
+# trust_accounts_arns: [] # (Optional) List of trust account ARNs. Default: []
+# Example:
 #   - "arn:aws:iam::111111111111:root"
 #   - "arn:aws:iam::222222222222:root"
+# trust_accounts_arns: [] # (Optional) List of trust account ARNs. Default: []
+# Example:
+#   - "arn:aws:iam::111111111111:root"
+#   - "arn:aws:iam::222222222222:root"
+variable "trust_accounts_arns" {
+  description = "List of trust account ARNs"
+  type        = list(string)
+  default     = []
+}
 
-# (Optional) Default Terraform user for the account. Default: "terraform-access"
-# default_terraform_user: "terraform-access"
+# default_terraform_user: "terraform-access" # (Optional) Default Terraform user for the account. Default: "terraform-access"
+# default_terraform_user: "terraform-access" # (Optional) Default Terraform user for the account. Default: "terraform-access"
+variable "default_terraform_user" {
+  description = "Default Terraform user for the account"
+  type        = string
+  default     = "terraform-access"
+}
 
-# (Optional) Default Terraform role for the account. Default: "terraform-access-role"
-# default_terraform_role: "terraform-access-role"
+# default_terraform_role: "terraform-access-role" # (Optional) Default Terraform role for the account. Default: "terraform-access-role"
+# default_terraform_role: "terraform-access-role" # (Optional) Default Terraform role for the account. Default: "terraform-access-role"
+variable "default_terraform_role" {
+  description = "Default Terraform role for the account"
+  type        = string
+  default     = "terraform-access-role"
+}
 
-# (Optional) Custom policy for Secrets Manager / Cross account. Default: {}
-# secrets_manager_policy:
+# secrets_manager_policy: {} # (Optional) Custom policy for Secrets Manager / Cross account. Default: {}
+# Example:
 #   cross_account_access: true
 #   allowed_accounts:
 #     - "111111111111"
+variable "secrets_manager_policy" {
+  description = "Custom policy for Secrets Manager / Cross account"
+  type        = any
+  default     = {}
+}
 
-# (Optional) Map of AWS service policy toggles. Default: {}
-# Each key enables admin-level policy for that service.
-# settings:
+# settings: # (Optional) Map of AWS service policy toggles. Default: {}
 #   # Core Services
 #   s3: false                    # (Optional) Enable S3 admin policy. Default: false
 #   ec2: false                   # (Optional) Enable EC2 admin policy. Default: false
@@ -104,7 +133,20 @@ account_id: "123456789012"
 #   awschatbot: false            # (Optional) Enable AWS Chatbot policy. Default: false
 #   awsbackup: false             # (Optional) Enable AWS Backup policy. Default: false
 #   device_farm: false           # (Optional) Enable Device Farm admin policy. Default: false
+variable "settings" {
+  description = "Map of AWS service policy toggles. Each key enables admin-level policy for that service."
+  type        = any
+  default     = {}
+}
 
-# (Optional) List of ARNs that can be passed to services. Default: []
-# allowed_pass_roles:
+# allowed_pass_roles: [] # (Optional) List of ARNs that can be passed to services. Default: []
+# Example:
 #   - "arn:aws:iam::123456789012:role/MyServiceRole"
+# allowed_pass_roles: [] # (Optional) List of ARNs that can be passed to services. Default: []
+# Example:
+#   - "arn:aws:iam::123456789012:role/MyServiceRole"
+variable "allowed_pass_roles" {
+  description = "List of ARNs that can be passed to services"
+  type        = list(string)
+  default     = []
+}
