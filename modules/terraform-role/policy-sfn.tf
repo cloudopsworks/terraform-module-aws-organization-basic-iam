@@ -28,7 +28,7 @@ data "aws_iam_policy_document" "tf_sfn_admin" {
 }
 
 resource "aws_iam_role_policy" "terraform_access_sfn_admin" {
-  count  = try(var.settings.lambda, false) ? 1 : 0
+  count  = try(var.settings.step_functions, false) || try(var.settings.sfn, false) || try(var.settings.states, false) ? 1 : 0
   name   = "StepFunctionsAdminAccess"
   role   = aws_iam_role.terraform_access.name
   policy = data.aws_iam_policy_document.tf_sfn_admin[count.index].json
