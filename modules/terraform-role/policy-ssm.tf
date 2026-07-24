@@ -71,6 +71,29 @@ data "aws_iam_policy_document" "tf_ssm_store" {
     ]
     resources = ["*"]
   }
+
+  statement {
+    sid    = "SSMAssociationManageActions"
+    effect = "Allow"
+    actions = [
+      "ssm:CreateAssociation",
+      "ssm:UpdateAssociation",
+      "ssm:DeleteAssociation",
+      "ssm:DescribeAssociation",
+      "ssm:DescribeAssociationExecutionTargets",
+      "ssm:DescribeAssociationExecutions",
+      "ssm:ListAssociations",
+      "ssm:ListAssociationVersions",
+      "ssm:ListTagsForResource",
+      "ssm:AddTagsToResource",
+      "ssm:RemoveTagsFromResource",
+      "ssm:UpdateAssociationStatus",
+      "ssm:UpdateAssociationExecutionTarget",
+      "ssm:UpdateAssociationExecution",
+      "ssm:UpdateAssociationDefaultVersion"
+    ]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "terraform_access_ssm_store" {
