@@ -16,7 +16,7 @@
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_account_policy"></a> [account\_policy](#module\_account\_policy) | ./modules/account-policy | n/a |
-| <a name="module_tags"></a> [tags](#module\_tags) | cloudopsworks/tags/local | 1.0.9 |
+| <a name="module_tags"></a> [tags](#module\_tags) | cloudopsworks/tags/local | 1.0.10 |
 | <a name="module_tf_role"></a> [tf\_role](#module\_tf\_role) | ./modules/terraform-role | n/a |
 
 ## Resources
