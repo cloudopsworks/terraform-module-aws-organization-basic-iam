@@ -94,6 +94,90 @@ data "aws_iam_policy_document" "tf_ssm_store" {
     ]
     resources = ["*"]
   }
+
+  # Inventory Resource Data Sync (aws_ssm_resource_data_sync)
+  statement {
+    sid    = "SSMResourceDataSyncActions"
+    effect = "Allow"
+    actions = [
+      "ssm:CreateResourceDataSync",
+      "ssm:UpdateResourceDataSync",
+      "ssm:DeleteResourceDataSync",
+      "ssm:ListResourceDataSync",
+    ]
+    resources = ["*"]
+  }
+
+  # Patch baseline lookups feeding Quick Setup patch policies (data.aws_ssm_patch_baselines)
+  statement {
+    sid    = "SSMPatchBaselineReadActions"
+    effect = "Allow"
+    actions = [
+      "ssm:DescribePatchBaselines",
+      "ssm:GetPatchBaseline",
+      "ssm:GetDefaultPatchBaseline",
+      "ssm:GetPatchBaselineForPatchGroup",
+      "ssm:DescribeEffectivePatchesForPatchBaseline",
+    ]
+    resources = ["*"]
+  }
+
+  # Quick Setup configuration managers (aws_ssmquicksetup_configuration_manager).
+  # Quick Setup provisions its own CloudFormation stack sets and IAM roles, which are
+  # granted by the CloudformationAdmin and IAM policies of this role.
+  statement {
+    sid    = "SSMQuickSetupActions"
+    effect = "Allow"
+    actions = [
+      "ssm-quicksetup:CreateConfigurationManager",
+      "ssm-quicksetup:UpdateConfigurationManager",
+      "ssm-quicksetup:UpdateConfigurationDefinition",
+      "ssm-quicksetup:DeleteConfigurationManager",
+      "ssm-quicksetup:GetConfigurationManager",
+      "ssm-quicksetup:GetConfiguration",
+      "ssm-quicksetup:ListConfigurationManagers",
+      "ssm-quicksetup:ListConfigurations",
+      "ssm-quicksetup:ListQuickSetupTypes",
+      "ssm-quicksetup:GetServiceSettings",
+      "ssm-quicksetup:UpdateServiceSettings",
+      "ssm-quicksetup:ListTagsForResource",
+      "ssm-quicksetup:TagResource",
+      "ssm-quicksetup:UntagResource",
+    ]
+    resources = ["*"]
+  }
+
+  # GUI Connect RDP connection recording preferences
+  # (awscc_ssmguiconnect_preferences / AWS::SSMGuiConnect::Preferences).
+  # The Cloud Control update and delete handlers both require Delete on top of Get/Update.
+  statement {
+    sid    = "SSMGUIConnectActions"
+    effect = "Allow"
+    actions = [
+      "ssm-guiconnect:GetConnectionRecordingPreferences",
+      "ssm-guiconnect:UpdateConnectionRecordingPreferences",
+      "ssm-guiconnect:DeleteConnectionRecordingPreferences",
+    ]
+    resources = ["*"]
+  }
+
+  # The awscc provider drives awscc_ssmguiconnect_preferences through the Cloud Control
+  # API, whose operations authorize as cloudformation:*Resource actions rather than the
+  # classic stack actions. Cloud Control does not accept a resource-level ARN for these.
+  statement {
+    sid    = "SSMGUIConnectCloudControlActions"
+    effect = "Allow"
+    actions = [
+      "cloudformation:CreateResource",
+      "cloudformation:GetResource",
+      "cloudformation:UpdateResource",
+      "cloudformation:DeleteResource",
+      "cloudformation:ListResources",
+      "cloudformation:GetResourceRequestStatus",
+      "cloudformation:CancelResourceRequest",
+    ]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "terraform_access_ssm_store" {
