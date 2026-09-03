@@ -160,6 +160,24 @@ data "aws_iam_policy_document" "tf_ssm_store" {
     ]
     resources = ["*"]
   }
+
+  # The awscc provider drives awscc_ssmguiconnect_preferences through the Cloud Control
+  # API, whose operations authorize as cloudformation:*Resource actions rather than the
+  # classic stack actions. Cloud Control does not accept a resource-level ARN for these.
+  statement {
+    sid    = "SSMGUIConnectCloudControlActions"
+    effect = "Allow"
+    actions = [
+      "cloudformation:CreateResource",
+      "cloudformation:GetResource",
+      "cloudformation:UpdateResource",
+      "cloudformation:DeleteResource",
+      "cloudformation:ListResources",
+      "cloudformation:GetResourceRequestStatus",
+      "cloudformation:CancelResourceRequest",
+    ]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "terraform_access_ssm_store" {
