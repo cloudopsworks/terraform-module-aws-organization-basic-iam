@@ -29,9 +29,39 @@ data "aws_iam_policy_document" "tf_cloudwatch_admin" {
   }
 
   statement {
-    sid       = "AllowSynthetics"
-    effect    = "Allow"
-    actions   = ["synthetics:*"]
+    sid    = "AllowAllSynthetics"
+    effect = "Allow"
+    actions = [
+      "synthetics:*"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+
+  statement {
+    sid    = "AllowAllApplicationSignals"
+    effect = "Allow"
+    actions = [
+      "application-signals:*"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+
+  statement {
+    sid    = "AllowAnyAlarmActions"
+    effect = "Allow"
+    actions = [
+      "cloudwatch:DescribeAlarmsForMetric",
+      "cloudwatch:DescribeAlarmHistory",
+      "cloudwatch:DescribeAlarms",
+      "cloudwatch:PutMetricAlarm",
+      "cloudwatch:DeleteAlarms",
+      "cloudwatch:EnableAlarmActions",
+      "cloudwatch:DisableAlarmActions"
+    ]
     resources = ["*"]
   }
 }
