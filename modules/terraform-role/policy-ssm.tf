@@ -55,6 +55,24 @@ data "aws_iam_policy_document" "tf_ssm_store" {
   }
 
   statement {
+    sid = "SSMMaintenanceWindows"
+    effect = "Allow"
+    actions = [
+        "ssm:CreateMaintenanceWindow*",
+        "ssm:UpdateMaintenanceWindow*",
+        "ssm:DeleteMaintenanceWindow*",
+        "ssm:DescribeMaintenanceWindow*",
+        "ssm:GetMaintenanceWindow*",
+        "ssm:ListMaintenanceWindow*",
+        "ssm:RegisterTargetWithMaintenanceWindow",
+        "ssm:DeregisterTargetFromMaintenanceWindow",
+        "ssm:RegisterTaskWithMaintenanceWindow",
+        "ssm:DeregisterTaskFromMaintenanceWindow",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
     sid    = "SSMDocumentsAndChangeCalendar"
     effect = "Allow"
     actions = [
