@@ -4,7 +4,6 @@ data "aws_iam_policy_document" "tf_s3_admin" {
   version = "2012-10-17"
 
   statement {
-    sid    = "AllAccessS3"
     effect = "Allow"
     actions = [
       "s3:ListStorageLensConfigurations",
@@ -18,36 +17,23 @@ data "aws_iam_policy_document" "tf_s3_admin" {
       "s3:ListJobs",
       "s3:PutStorageLensConfiguration",
       "s3:ListMultiRegionAccessPoints",
-      "s3:CreateJob"
+      "s3:CreateJob",
     ]
     resources = ["*"]
   }
 
+  # arn:aws:s3:::* also matches every object ARN (arn:aws:s3:::bucket/key).
   statement {
-    sid    = "AllowOnServices"
-    effect = "Allow"
-    actions = [
-      "s3:*"
-    ]
+    effect  = "Allow"
+    actions = ["s3:*"]
     resources = [
       "arn:aws:s3:::*",
+      "arn:aws:s3::${var.account_id}:accesspoint/*",
       "arn:aws:s3:*:${var.account_id}:storage-lens/*",
       "arn:aws:s3:*:${var.account_id}:accesspoint/*",
       "arn:aws:s3-object-lambda:*:${var.account_id}:accesspoint/*",
       "arn:aws:s3:*:${var.account_id}:job/*",
-      "arn:aws:s3:*:${var.account_id}:async-request/mrap/*/*"
-    ]
-  }
-
-  statement {
-    sid    = "AllowOnObjects"
-    effect = "Allow"
-    actions = [
-      "s3:*"
-    ]
-    resources = [
-      "arn:aws:s3::${var.account_id}:accesspoint/*",
-      "arn:aws:s3:::*/*"
+      "arn:aws:s3:*:${var.account_id}:async-request/mrap/*/*",
     ]
   }
 }

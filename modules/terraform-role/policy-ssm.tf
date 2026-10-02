@@ -4,19 +4,15 @@ data "aws_iam_policy_document" "tf_ssm_store" {
   version = "2012-10-17"
 
   statement {
-    sid    = "SSMParameterActions"
     effect = "Allow"
     actions = [
       "ssm:PutParameter",
       "ssm:DeleteParameter",
-      "ssm:RemoveTagsFromResource",
       "ssm:GetParameterHistory",
-      "ssm:AddTagsToResource",
-      "ssm:ListTagsForResource",
       "ssm:GetParametersByPath",
       "ssm:GetParameters",
       "ssm:GetParameter",
-      "ssm:DeleteParameters"
+      "ssm:DeleteParameters",
     ]
     resources = [
       "arn:aws:ssm:*:${var.account_id}:parameter/*", # Account Parameters
@@ -25,9 +21,9 @@ data "aws_iam_policy_document" "tf_ssm_store" {
   }
 
   statement {
-    sid    = "SSMAllowAdmin"
     effect = "Allow"
     actions = [
+      # Service settings and tagging
       "ssm:DescribeParameters",
       "ssm:GetServiceSetting",
       "ssm:UpdateServiceSetting",
@@ -37,63 +33,35 @@ data "aws_iam_policy_document" "tf_ssm_store" {
       "ssm:PutConfigurePackageResult",
       "ssm:AddTagsToResource",
       "ssm:RemoveTagsFromResource",
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    sid    = "SSMRunCommands"
-    effect = "Allow"
-    actions = [
+      "ssm:ListTagsForResource",
+      # Run Command
       "ssm:SendCommand",
       "ssm:ListCommands",
       "ssm:ListCommandInvocations",
       "ssm:GetCommandInvocation",
-      "ssm:CancelCommand"
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    sid = "SSMMaintenanceWindows"
-    effect = "Allow"
-    actions = [
-        "ssm:CreateMaintenanceWindow*",
-        "ssm:UpdateMaintenanceWindow*",
-        "ssm:DeleteMaintenanceWindow*",
-        "ssm:DescribeMaintenanceWindow*",
-        "ssm:GetMaintenanceWindow*",
-        "ssm:ListMaintenanceWindow*",
-        "ssm:RegisterTargetWithMaintenanceWindow",
-        "ssm:DeregisterTargetFromMaintenanceWindow",
-        "ssm:RegisterTaskWithMaintenanceWindow",
-        "ssm:DeregisterTaskFromMaintenanceWindow",
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    sid    = "SSMDocumentsAndChangeCalendar"
-    effect = "Allow"
-    actions = [
+      "ssm:CancelCommand",
+      # Maintenance Windows
+      "ssm:CreateMaintenanceWindow*",
+      "ssm:UpdateMaintenanceWindow*",
+      "ssm:DeleteMaintenanceWindow*",
+      "ssm:DescribeMaintenanceWindow*",
+      "ssm:GetMaintenanceWindow*",
+      "ssm:ListMaintenanceWindow*",
+      "ssm:RegisterTargetWithMaintenanceWindow",
+      "ssm:DeregisterTargetFromMaintenanceWindow",
+      "ssm:RegisterTaskWithMaintenanceWindow",
+      "ssm:DeregisterTaskFromMaintenanceWindow",
+      # Documents and Change Calendar
       "ssm:CreateDocument*",
       "ssm:UpdateDocument*",
       "ssm:DeleteDocument*",
       "ssm:GetDocument*",
-      "ssm:ListDocuments",
       "ssm:ListDocument*",
       "ssm:DescribeDocument*",
       "ssm:GetCalendarState",
       "ssm:PutCalendar",
       "ssm:GetCalendar",
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    sid    = "SSMAssociationManageActions"
-    effect = "Allow"
-    actions = [
+      # State Manager associations
       "ssm:CreateAssociation",
       "ssm:UpdateAssociation",
       "ssm:DeleteAssociation",
@@ -102,51 +70,24 @@ data "aws_iam_policy_document" "tf_ssm_store" {
       "ssm:DescribeAssociationExecutions",
       "ssm:ListAssociations",
       "ssm:ListAssociationVersions",
-      "ssm:ListTagsForResource",
-      "ssm:AddTagsToResource",
-      "ssm:RemoveTagsFromResource",
       "ssm:UpdateAssociationStatus",
       "ssm:UpdateAssociationExecutionTarget",
       "ssm:UpdateAssociationExecution",
-      "ssm:UpdateAssociationDefaultVersion"
-    ]
-    resources = ["*"]
-  }
-
-  # Inventory Resource Data Sync (aws_ssm_resource_data_sync)
-  statement {
-    sid    = "SSMResourceDataSyncActions"
-    effect = "Allow"
-    actions = [
+      "ssm:UpdateAssociationDefaultVersion",
+      # Inventory Resource Data Sync (aws_ssm_resource_data_sync)
       "ssm:CreateResourceDataSync",
       "ssm:UpdateResourceDataSync",
       "ssm:DeleteResourceDataSync",
       "ssm:ListResourceDataSync",
-    ]
-    resources = ["*"]
-  }
-
-  # Patch baseline lookups feeding Quick Setup patch policies (data.aws_ssm_patch_baselines)
-  statement {
-    sid    = "SSMPatchBaselineReadActions"
-    effect = "Allow"
-    actions = [
+      # Patch baseline lookups feeding Quick Setup patch policies (data.aws_ssm_patch_baselines)
       "ssm:DescribePatchBaselines",
       "ssm:GetPatchBaseline",
       "ssm:GetDefaultPatchBaseline",
       "ssm:GetPatchBaselineForPatchGroup",
       "ssm:DescribeEffectivePatchesForPatchBaseline",
-    ]
-    resources = ["*"]
-  }
-
-  # Quick Setup configuration managers (aws_ssmquicksetup_configuration_manager).
-  # Quick Setup provisions its own CloudFormation stack sets and IAM roles, which are
-  # granted by the CloudformationAdmin and IAM policies of this role.
-  statement {
-    sid    = "SSMQuickSetupActions"
-    effect = "Allow"
-    actions = [
+      # Quick Setup configuration managers (aws_ssmquicksetup_configuration_manager).
+      # Quick Setup provisions its own CloudFormation stack sets and IAM roles, which are
+      # granted by the CloudformationAdmin and IAM policies of this role.
       "ssm-quicksetup:CreateConfigurationManager",
       "ssm-quicksetup:UpdateConfigurationManager",
       "ssm-quicksetup:UpdateConfigurationDefinition",
@@ -161,31 +102,15 @@ data "aws_iam_policy_document" "tf_ssm_store" {
       "ssm-quicksetup:ListTagsForResource",
       "ssm-quicksetup:TagResource",
       "ssm-quicksetup:UntagResource",
-    ]
-    resources = ["*"]
-  }
-
-  # GUI Connect RDP connection recording preferences
-  # (awscc_ssmguiconnect_preferences / AWS::SSMGuiConnect::Preferences).
-  # The Cloud Control update and delete handlers both require Delete on top of Get/Update.
-  statement {
-    sid    = "SSMGUIConnectActions"
-    effect = "Allow"
-    actions = [
+      # GUI Connect RDP connection recording preferences
+      # (awscc_ssmguiconnect_preferences / AWS::SSMGuiConnect::Preferences).
+      # The Cloud Control update and delete handlers both require Delete on top of Get/Update.
       "ssm-guiconnect:GetConnectionRecordingPreferences",
       "ssm-guiconnect:UpdateConnectionRecordingPreferences",
       "ssm-guiconnect:DeleteConnectionRecordingPreferences",
-    ]
-    resources = ["*"]
-  }
-
-  # The awscc provider drives awscc_ssmguiconnect_preferences through the Cloud Control
-  # API, whose operations authorize as cloudformation:*Resource actions rather than the
-  # classic stack actions. Cloud Control does not accept a resource-level ARN for these.
-  statement {
-    sid    = "SSMGUIConnectCloudControlActions"
-    effect = "Allow"
-    actions = [
+      # The awscc provider drives awscc_ssmguiconnect_preferences through the Cloud Control
+      # API, whose operations authorize as cloudformation:*Resource actions rather than the
+      # classic stack actions. Cloud Control does not accept a resource-level ARN for these.
       "cloudformation:CreateResource",
       "cloudformation:GetResource",
       "cloudformation:UpdateResource",

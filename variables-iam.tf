@@ -133,6 +133,8 @@ variable "secrets_manager_policy" {
 #   awschatbot: false            # (Optional) Enable AWS Chatbot policy. Default: false
 #   awsbackup: false             # (Optional) Enable AWS Backup policy. Default: false
 #   device_farm: false           # (Optional) Enable Device Farm admin policy. Default: false
+#   # IAM quotas
+#   managed_policies_quota: 10   # (Optional) Managed policies per role allowed in the account, checked at plan time. Raise only after increasing the IAM "Managed policies per role" Service Quota (max 20). Default: 10
 variable "settings" {
   description = "Map of AWS service policy toggles. Each key enables admin-level policy for that service."
   type        = any

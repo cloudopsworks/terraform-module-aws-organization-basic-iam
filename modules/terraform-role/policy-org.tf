@@ -4,7 +4,6 @@ data "aws_iam_policy_document" "tf_organization_admin" {
   version = "2012-10-17"
 
   statement {
-    sid     = "IAMServiceLinkedRole"
     effect  = "Allow"
     actions = ["iam:CreateServiceLinkedRole"]
     resources = [
@@ -13,7 +12,6 @@ data "aws_iam_policy_document" "tf_organization_admin" {
   }
 
   statement {
-    sid    = "AllowActionsAll"
     effect = "Allow"
     actions = [
       "organizations:ListRoots",
@@ -42,7 +40,6 @@ data "aws_iam_policy_document" "tf_organization_admin" {
   }
 
   statement {
-    sid    = "AllowAllOrgObjects"
     effect = "Allow"
     actions = [
       "organizations:*"

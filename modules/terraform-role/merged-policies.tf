@@ -31,3 +31,59 @@ data "aws_iam_policy_document" "terraform_access_sensitive_combined" {
   count                   = length(local.sensitive_policies) > 0 ? 1 : 0
   source_policy_documents = local.sensitive_policies
 }
+# IAM caps the aggregate size of all inline policies of a role at 10,240 characters,
+# not counting white space. Every aws_iam_role_policy of this module must be listed
+# here so the role_arn output precondition fails the plan before the apply does.
+locals {
+  inline_policies_size_limit = 10240
+  inline_policies_size = sum([for policy in concat(
+    aws_iam_role_policy.terraform_access_backup_admin[*].policy,
+    aws_iam_role_policy.terraform_access_chatbot_admin[*].policy,
+    aws_iam_role_policy.terraform_access_cloudtransformation_admin[*].policy,
+    aws_iam_role_policy.terraform_access_cloudfront_admin[*].policy,
+    aws_iam_role_policy.terraform_access_cloudwatch_admin[*].policy,
+    aws_iam_role_policy.terraform_access_dynamodb_admin[*].policy,
+    aws_iam_role_policy.terraform_access_ecs_admin[*].policy,
+    aws_iam_role_policy.terraform_access_efs_admin[*].policy,
+    aws_iam_role_policy.terraform_access_eventbridge_admin[*].policy,
+    aws_iam_role_policy.terraform_access_lambda_admin[*].policy,
+    aws_iam_role_policy.terraform_access_organization_admin[*].policy,
+    aws_iam_role_policy.terraform_access_s3_admin[*].policy,
+    aws_iam_role_policy.terraform_access_ses_admin[*].policy,
+    aws_iam_role_policy.terraform_access_sfn_admin[*].policy,
+    aws_iam_role_policy.terraform_access_sns_admin[*].policy,
+    aws_iam_role_policy.terraform_access_sqs_admin[*].policy,
+    aws_iam_role_policy.terraform_access_ssm_store[*].policy,
+    aws_iam_role_policy.terraform_access_sso_admin[*].policy,
+    [""],
+  ) : length(replace(policy, "/\\s/", ""))])
+}
+
+# IAM caps managed policy attachments per role (10 by default, adjustable up to 20
+# through Service Quotas) and each customer managed policy at 6,144 characters, not
+# counting white space. Every aws_iam_role_policy_attachment and aws_iam_policy of this
+# module must be listed here so the role_arn output preconditions fail the plan.
+locals {
+  managed_policies_quota = try(var.settings.managed_policies_quota, 10)
+  managed_policies_count = length(concat(
+    aws_iam_role_policy_attachment.terraform_access[*].policy_arn,
+    aws_iam_role_policy_attachment.terraform_access_eks_admin[*].policy_arn,
+    aws_iam_role_policy_attachment.terraform_access_route53_admin[*].policy_arn,
+    aws_iam_role_policy_attachment.beanstalk_admin[*].policy_arn,
+    aws_iam_role_policy_attachment.tf_apig_admin[*].policy_arn,
+    aws_iam_role_policy_attachment.tf_cognito[*].policy_arn,
+    aws_iam_role_policy_attachment.tf_ec2_full[*].policy_arn,
+    aws_iam_role_policy_attachment.tf_rds_full[*].policy_arn,
+    aws_iam_role_policy_attachment.tf_vpc_full[*].policy_arn,
+    aws_iam_role_policy_attachment.tf_acm_full[*].policy_arn,
+  ))
+  managed_policy_size_limit = 6144
+  oversized_managed_policies = {
+    for policy in concat(
+      aws_iam_policy.terraform_access_sentsitive,
+      aws_iam_policy.terraform_access_eks_admin,
+      aws_iam_policy.terraform_access_route53_admin,
+    ) : policy.name => length(replace(policy.policy, "/\\s/", ""))
+    if length(replace(policy.policy, "/\\s/", "")) > local.managed_policy_size_limit
+  }
+}

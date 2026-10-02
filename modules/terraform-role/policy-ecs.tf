@@ -3,32 +3,15 @@
 data "aws_iam_policy_document" "tf_ecs_admin" {
   count   = try(var.settings.ecs, false) ? 1 : 0
   version = "2012-10-17"
+
   statement {
-    sid    = "EcsCreate"
     effect = "Allow"
     actions = [
       "ecs:DescribeAddonConfiguration",
       "ecs:ListClusters",
       "ecs:DescribeAddonVersions",
       "ecs:RegisterCluster",
-      "ecs:CreateCluster"
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    sid     = "ECSComponents"
-    effect  = "Allow"
-    actions = ["ecs:*"]
-    resources = [
-      "arn:aws:ecs:*:${var.account_id}:*",
-    ]
-  }
-
-  statement {
-    sid    = "ECRAccess"
-    effect = "Allow"
-    actions = [
+      "ecs:CreateCluster",
       "ecr:GetRegistryPolicy",
       "ecr:DescribeRegistry",
       "ecr:DescribePullThroughCacheRules",
@@ -47,26 +30,21 @@ data "aws_iam_policy_document" "tf_ecs_admin" {
       "ecr:DeleteRegistryPolicy",
       "ecr:UpdatePullThroughCacheRule",
       "ecr:PutReplicationConfiguration",
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    sid     = "ECRComponents"
-    effect  = "Allow"
-    actions = ["ecr:*"]
-    resources = [
-      "arn:aws:ecr:*:${var.account_id}:repository/*",
-    ]
-  }
-
-  statement {
-    sid    = "APPAutoScaling"
-    effect = "Allow"
-    actions = [
       "application-autoscaling:*",
     ]
     resources = ["*"]
+  }
+
+  statement {
+    effect    = "Allow"
+    actions   = ["ecs:*"]
+    resources = ["arn:aws:ecs:*:${var.account_id}:*"]
+  }
+
+  statement {
+    effect    = "Allow"
+    actions   = ["ecr:*"]
+    resources = ["arn:aws:ecr:*:${var.account_id}:repository/*"]
   }
 }
 

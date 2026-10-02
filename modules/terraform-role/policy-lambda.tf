@@ -4,7 +4,6 @@ data "aws_iam_policy_document" "tf_lambda_admin" {
   version = "2012-10-17"
 
   statement {
-    sid    = "LambdaAdminAccess"
     effect = "Allow"
     actions = [
       "lambda:List*",
@@ -21,38 +20,25 @@ data "aws_iam_policy_document" "tf_lambda_admin" {
     resources = ["*"]
   }
 
+  # function:* also matches qualified (version/alias) function ARNs.
   statement {
-    sid    = "LambdaFunctionsAccess"
-    effect = "Allow"
-    actions = [
-      "iam:PassRole",
-      "lambda:*"
-    ]
-    resources = concat([
-      "arn:aws:lambda:*:${var.account_id}:function:*:*"
-      ],
-      var.allowed_pass_roles
-    )
-  }
-
-  statement {
-    sid     = "LambdaLayersAccess"
     effect  = "Allow"
     actions = ["lambda:*"]
     resources = [
       "arn:aws:lambda:*:*:layer:*",
-      "arn:aws:lambda:*:${var.account_id}:function:*"
+      "arn:aws:lambda:*:${var.account_id}:function:*",
+      "arn:aws:lambda:*:${var.account_id}:code-signing-config:*",
+      "arn:aws:lambda:*:${var.account_id}:event-source-mapping:*",
     ]
   }
 
-  statement {
-    sid     = "LambdaCodeSignAccess"
-    effect  = "Allow"
-    actions = ["lambda:*"]
-    resources = [
-      "arn:aws:lambda:*:${var.account_id}:code-signing-config:*",
-      "arn:aws:lambda:*:${var.account_id}:event-source-mapping:*"
-    ]
+  dynamic "statement" {
+    for_each = length(var.allowed_pass_roles) > 0 ? [1] : []
+    content {
+      effect    = "Allow"
+      actions   = ["iam:PassRole"]
+      resources = var.allowed_pass_roles
+    }
   }
 }
 
