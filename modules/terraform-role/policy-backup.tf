@@ -3,7 +3,6 @@ data "aws_iam_policy_document" "tf_backup_admin" {
   count   = try(var.settings.awsbackup, false) ? 1 : 0
   version = "2012-10-17"
   statement {
-    sid = "BackupAllowAll"
     actions = [
       "backup:*",
       "backup-storage:*",

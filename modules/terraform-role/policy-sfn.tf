@@ -4,26 +4,18 @@ data "aws_iam_policy_document" "tf_sfn_admin" {
   version = "2012-10-17"
 
   statement {
-    sid    = "StepFunctionsAccess"
-    effect = "Allow"
-    actions = [
-      "iam:PassRole",
-      "states:*"
-    ]
-    resources = concat([
-      "arn:aws:states:*:${var.account_id}:stateMachine:*"
-      ],
-      var.allowed_pass_roles
-    )
+    effect    = "Allow"
+    actions   = ["states:*"]
+    resources = ["arn:aws:states:*:${var.account_id}:stateMachine:*"]
   }
 
-  statement {
-    sid     = "StepFunctionsFullAccess"
-    effect  = "Allow"
-    actions = ["lambda:*"]
-    resources = [
-      "arn:aws:states:*:${var.account_id}:stateMachine:*"
-    ]
+  dynamic "statement" {
+    for_each = length(var.allowed_pass_roles) > 0 ? [1] : []
+    content {
+      effect    = "Allow"
+      actions   = ["iam:PassRole"]
+      resources = var.allowed_pass_roles
+    }
   }
 }
 

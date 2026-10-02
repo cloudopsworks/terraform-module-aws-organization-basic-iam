@@ -4,7 +4,6 @@ data "aws_iam_policy_document" "tf_dynamodb_admin" {
   version = "2012-10-17"
 
   statement {
-    sid    = "AllAccessDynamoDB"
     effect = "Allow"
     actions = [
       "dynamodb:List*",
@@ -14,30 +13,13 @@ data "aws_iam_policy_document" "tf_dynamodb_admin" {
     resources = ["*"]
   }
 
+  # table/* also matches the index, stream, backup, export and import sub-resources.
   statement {
-    sid    = "AllowAllOnTable"
-    effect = "Allow"
-    actions = [
-      "dynamodb:*"
-    ]
+    effect  = "Allow"
+    actions = ["dynamodb:*"]
     resources = [
-      "arn:aws:dynamodb:*:${var.account_id}:table/*"
-    ]
-  }
-
-  statement {
-    sid    = "AllowOnObjects"
-    effect = "Allow"
-    actions = [
-      "dynamodb:*"
-    ]
-    resources = [
-      "arn:aws:dynamodb:*:${var.account_id}:table/*/export/*",
-      "arn:aws:dynamodb:*:${var.account_id}:table/*/stream/*",
-      "arn:aws:dynamodb:*:${var.account_id}:table/*/import/*",
+      "arn:aws:dynamodb:*:${var.account_id}:table/*",
       "arn:aws:dynamodb::${var.account_id}:global-table/*",
-      "arn:aws:dynamodb:*:${var.account_id}:table/*/index/*",
-      "arn:aws:dynamodb:*:${var.account_id}:table/*/backup/*"
     ]
   }
 }
