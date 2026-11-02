@@ -21,6 +21,21 @@ data "aws_iam_policy_document" "tf_cloudwatch_admin" {
     ]
     resources = ["*"]
   }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "iam:CreateServiceLinkedRole",
+    ]
+    resources = [
+      "arn:aws:iam::*:role/aws-service-role/application-signals.cloudwatch.amazonaws.com/AWSServiceRoleForCloudWatchApplicationSignals",
+    ]
+    condition {
+      test     = "StringEquals"
+      values = ["application-signals.cloudwatch.amazonaws.com"]
+      variable = "iam:AWSServiceName"
+    }
+  }
 }
 
 resource "aws_iam_role_policy" "terraform_access_cloudwatch_admin" {
