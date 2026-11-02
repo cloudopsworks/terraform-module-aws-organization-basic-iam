@@ -10,6 +10,7 @@ data "aws_iam_policy_document" "tf_cloudwatch_admin" {
       "logs:*",
       "synthetics:*",
       "application-signals:*",
+      "xray:*",
       "cloudwatch:DescribeAlarmsForMetric",
       "cloudwatch:DescribeAlarmHistory",
       "cloudwatch:DescribeAlarms",
