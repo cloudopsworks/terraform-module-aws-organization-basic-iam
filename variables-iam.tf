@@ -67,11 +67,14 @@ variable "default_terraform_role" {
   default     = "terraform-access-role"
 }
 
-# secrets_manager_policy: {} # (Optional) Custom policy for Secrets Manager / Cross account. Default: {}
-# Example:
-#   cross_account_access: true
-#   allowed_accounts:
-#     - "111111111111"
+# secrets_manager_policy: {} # (Optional) Cross-account Secrets Manager read access for the Terraform role. Default: {}
+#   secret_arn: "arn:aws:secretsmanager:us-east-1:111111111111:secret:my-secret" # (Optional) Single secret ARN. Takes precedence over secrets when non-empty.
+#   secrets:                                                                     # (Optional) List of secret ARNs, used when secret_arn is empty. Default: []
+#     - "arn:aws:secretsmanager:us-east-1:111111111111:secret:my-secret-*"
+#   kms_key_arn: "arn:aws:kms:us-east-1:111111111111:key/abcd-1234"              # (Optional) Single KMS key ARN for kms:Decrypt. Takes precedence over kms_keys when non-empty.
+#   kms_keys:                                                                    # (Optional) List of KMS key ARNs, used when kms_key_arn is empty. Default: []
+#     - "arn:aws:kms:us-east-1:111111111111:key/abcd-1234"
+# When set, provide at least one secret (secret_arn or secrets) and one KMS key (kms_key_arn or kms_keys).
 variable "secrets_manager_policy" {
   description = "Custom policy for Secrets Manager / Cross account"
   type        = any

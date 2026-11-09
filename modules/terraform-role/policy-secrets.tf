@@ -76,10 +76,11 @@ data "aws_iam_policy_document" "secrets_cross_account" {
     effect = "Allow"
     actions = [
       "secretsmanager:GetSecretValue",
+      "secretsmanager:DescribeSecret",
     ]
-    resources = [
+    resources = try(var.secrets_manager_policy.secret_arn, "") != "" ? [
       var.secrets_manager_policy.secret_arn
-    ]
+    ] : try(var.secrets_manager_policy.secrets, [])
   }
   statement {
     sid    = "SecretsManagerCrossAccountKms"
@@ -87,9 +88,9 @@ data "aws_iam_policy_document" "secrets_cross_account" {
     actions = [
       "kms:Decrypt"
     ]
-    resources = [
+    resources = try(var.secrets_manager_policy.kms_key_arn, "") != "" ? [
       var.secrets_manager_policy.kms_key_arn
-    ]
+    ] : try(var.secrets_manager_policy.kms_keys, [])
   }
 }
 
