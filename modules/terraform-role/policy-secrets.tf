@@ -77,6 +77,7 @@ data "aws_iam_policy_document" "secrets_cross_account" {
     actions = [
       "secretsmanager:GetSecretValue",
       "secretsmanager:DescribeSecret",
+      "secretsmanager:GetResourcePolicy",
     ]
     resources = try(var.secrets_manager_policy.secret_arn, "") != "" ? [
       var.secrets_manager_policy.secret_arn
