@@ -41,11 +41,15 @@ account_id: "123456789012"
 # (Optional) Default Terraform role for the account. Default: "terraform-access-role"
 # default_terraform_role: "terraform-access-role"
 
-# (Optional) Custom policy for Secrets Manager / Cross account. Default: {}
+# (Optional) Cross-account Secrets Manager read access for the Terraform role. Default: {}
+# When set, provide at least one secret (secret_arn or secrets) and one KMS key (kms_key_arn or kms_keys).
 # secrets_manager_policy:
-#   cross_account_access: true
-#   allowed_accounts:
-#     - "111111111111"
+#   secret_arn: "arn:aws:secretsmanager:us-east-1:111111111111:secret:my-secret"  # (Optional) Single secret ARN. Takes precedence over secrets when non-empty.
+#   secrets:                                                                      # (Optional) List of secret ARNs, used when secret_arn is empty. Default: []
+#     - "arn:aws:secretsmanager:us-east-1:111111111111:secret:my-secret-*"
+#   kms_key_arn: "arn:aws:kms:us-east-1:111111111111:key/abcd-1234"               # (Optional) Single KMS key ARN for kms:Decrypt. Takes precedence over kms_keys when non-empty.
+#   kms_keys:                                                                     # (Optional) List of KMS key ARNs, used when kms_key_arn is empty. Default: []
+#     - "arn:aws:kms:us-east-1:111111111111:key/abcd-1234"
 
 # (Optional) Map of AWS service policy toggles. Default: {}
 # Each key enables admin-level policy for that service.

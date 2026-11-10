@@ -32,7 +32,7 @@ data "aws_iam_policy_document" "tf_cloudwatch_admin" {
     ]
     condition {
       test     = "StringEquals"
-      values = ["application-signals.cloudwatch.amazonaws.com"]
+      values   = ["application-signals.cloudwatch.amazonaws.com"]
       variable = "iam:AWSServiceName"
     }
   }
