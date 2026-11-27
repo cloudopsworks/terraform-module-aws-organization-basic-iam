@@ -1,4 +1,6 @@
 # SSM Parameter Store reader/writer policy
+# Action lists use wildcards where the pattern matches exactly the intended actions, to keep
+# this inline policy small: it counts toward the role's 10,240-character inline aggregate.
 data "aws_iam_policy_document" "tf_ssm_store" {
   count   = try(var.settings.ssm, false) ? 1 : 0
   version = "2012-10-17"
@@ -7,12 +9,8 @@ data "aws_iam_policy_document" "tf_ssm_store" {
     effect = "Allow"
     actions = [
       "ssm:PutParameter",
-      "ssm:DeleteParameter",
-      "ssm:GetParameterHistory",
-      "ssm:GetParametersByPath",
-      "ssm:GetParameters",
-      "ssm:GetParameter",
-      "ssm:DeleteParameters",
+      "ssm:DeleteParameter*", # DeleteParameter, DeleteParameters
+      "ssm:GetParameter*",    # GetParameter, GetParameters, GetParametersByPath, GetParameterHistory
     ]
     resources = [
       "arn:aws:ssm:*:${var.account_id}:parameter/*", # Account Parameters
@@ -25,101 +23,71 @@ data "aws_iam_policy_document" "tf_ssm_store" {
     actions = [
       # Service settings and tagging
       "ssm:DescribeParameters",
-      "ssm:GetServiceSetting",
-      "ssm:UpdateServiceSetting",
-      "ssm:ResetServiceSetting",
+      "ssm:*ServiceSetting", # Get, Update, Reset
       "ssm:ExecuteAPI",
       "ssm:GetManifest",
       "ssm:PutConfigurePackageResult",
-      "ssm:AddTagsToResource",
-      "ssm:RemoveTagsFromResource",
-      "ssm:ListTagsForResource",
+      "ssm:*Tags*Resource", # AddTagsToResource, RemoveTagsFromResource, ListTagsForResource
       # Run Command
       "ssm:SendCommand",
-      "ssm:ListCommands",
-      "ssm:ListCommandInvocations",
+      "ssm:ListCommand*", # ListCommands, ListCommandInvocations
       "ssm:GetCommandInvocation",
       "ssm:CancelCommand",
-      # Maintenance Windows
-      "ssm:CreateMaintenanceWindow*",
-      "ssm:UpdateMaintenanceWindow*",
-      "ssm:DeleteMaintenanceWindow*",
-      "ssm:DescribeMaintenanceWindow*",
-      "ssm:GetMaintenanceWindow*",
-      "ssm:ListMaintenanceWindow*",
-      "ssm:RegisterTargetWithMaintenanceWindow",
-      "ssm:DeregisterTargetFromMaintenanceWindow",
-      "ssm:RegisterTaskWithMaintenanceWindow",
-      "ssm:DeregisterTaskFromMaintenanceWindow",
-      # Documents and Change Calendar
+      # Maintenance Windows: create/update/delete/describe/get/list, target and task
+      # (de)registration, and CancelMaintenanceWindowExecution.
+      "ssm:*MaintenanceWindow*",
+      # Documents and Change Calendar. ModifyDocumentPermission (document sharing) is
+      # deliberately not granted, so these are not collapsed into ssm:*Document*.
       "ssm:CreateDocument*",
       "ssm:UpdateDocument*",
       "ssm:DeleteDocument*",
       "ssm:GetDocument*",
       "ssm:ListDocument*",
       "ssm:DescribeDocument*",
-      "ssm:GetCalendarState",
+      "ssm:GetCalendar*", # GetCalendar, GetCalendarState
       "ssm:PutCalendar",
-      "ssm:GetCalendar",
       # State Manager associations
       "ssm:CreateAssociation",
-      "ssm:UpdateAssociation",
+      "ssm:UpdateAssociation*",
       "ssm:DeleteAssociation",
-      "ssm:DescribeAssociation",
-      "ssm:DescribeAssociationExecutionTargets",
-      "ssm:DescribeAssociationExecutions",
-      "ssm:ListAssociations",
-      "ssm:ListAssociationVersions",
-      "ssm:UpdateAssociationStatus",
-      "ssm:UpdateAssociationExecutionTarget",
-      "ssm:UpdateAssociationExecution",
-      "ssm:UpdateAssociationDefaultVersion",
-      # Inventory Resource Data Sync (aws_ssm_resource_data_sync)
-      "ssm:CreateResourceDataSync",
-      "ssm:UpdateResourceDataSync",
-      "ssm:DeleteResourceDataSync",
-      "ssm:ListResourceDataSync",
+      "ssm:DescribeAssociation*",
+      "ssm:ListAssociation*", # ListAssociations, ListAssociationVersions
+      # Inventory Resource Data Sync (aws_ssm_resource_data_sync): Create, Update, Delete, List
+      "ssm:*ResourceDataSync",
       # Patch baseline lookups feeding Quick Setup patch policies (data.aws_ssm_patch_baselines)
       "ssm:DescribePatchBaselines",
-      "ssm:GetPatchBaseline",
+      "ssm:GetPatchBaseline*", # GetPatchBaseline, GetPatchBaselineForPatchGroup
       "ssm:GetDefaultPatchBaseline",
-      "ssm:GetPatchBaselineForPatchGroup",
       "ssm:DescribeEffectivePatchesForPatchBaseline",
-      # Quick Setup configuration managers (aws_ssmquicksetup_configuration_manager).
-      # Quick Setup provisions its own CloudFormation stack sets and IAM roles, which are
-      # granted by the CloudformationAdmin and IAM policies of this role.
-      "ssm-quicksetup:CreateConfigurationManager",
-      "ssm-quicksetup:UpdateConfigurationManager",
-      "ssm-quicksetup:UpdateConfigurationDefinition",
-      "ssm-quicksetup:DeleteConfigurationManager",
-      "ssm-quicksetup:GetConfigurationManager",
-      "ssm-quicksetup:GetConfiguration",
-      "ssm-quicksetup:ListConfigurationManagers",
-      "ssm-quicksetup:ListConfigurations",
-      "ssm-quicksetup:ListQuickSetupTypes",
-      "ssm-quicksetup:GetServiceSettings",
-      "ssm-quicksetup:UpdateServiceSettings",
-      "ssm-quicksetup:ListTagsForResource",
-      "ssm-quicksetup:TagResource",
-      "ssm-quicksetup:UntagResource",
+      # Quick Setup configuration managers (aws_ssmquicksetup_configuration_manager and
+      # awscc_ssmquicksetup_configuration_manager). The wildcard equals the full list of
+      # ssm-quicksetup actions. Quick Setup provisions its own IAM roles, granted by the IAM
+      # policy of this role.
+      "ssm-quicksetup:*",
       # GUI Connect RDP connection recording preferences
-      # (awscc_ssmguiconnect_preferences / AWS::SSMGuiConnect::Preferences).
+      # (awscc_ssmguiconnect_preferences / AWS::SSMGuiConnect::Preferences): Get, Update, Delete.
       # The Cloud Control update and delete handlers both require Delete on top of Get/Update.
-      "ssm-guiconnect:GetConnectionRecordingPreferences",
-      "ssm-guiconnect:UpdateConnectionRecordingPreferences",
-      "ssm-guiconnect:DeleteConnectionRecordingPreferences",
-      # The awscc provider drives awscc_ssmguiconnect_preferences through the Cloud Control
-      # API, whose operations authorize as cloudformation:*Resource actions rather than the
-      # classic stack actions. Cloud Control does not accept a resource-level ARN for these.
-      "cloudformation:CreateResource",
-      "cloudformation:GetResource",
-      "cloudformation:UpdateResource",
-      "cloudformation:DeleteResource",
-      "cloudformation:ListResources",
-      "cloudformation:GetResourceRequestStatus",
-      "cloudformation:CancelResourceRequest",
+      "ssm-guiconnect:*ConnectionRecordingPreferences",
     ]
     resources = ["*"]
+  }
+
+  # CloudFormation access needed by the resources above, skipped when settings.cloudformation
+  # already grants cloudformation:* through the CloudformationAdmin policy.
+  # - Cloud Control API (awscc provider) authorizes as cloudformation:*Resource* actions
+  #   (Create/Get/Update/Delete/ListResources, GetResourceRequestStatus, CancelResourceRequest)
+  #   and does not accept a resource-level ARN.
+  # - Quick Setup configuration managers deploy CloudFormation stacks and stack sets.
+  dynamic "statement" {
+    for_each = try(var.settings.cloudformation, false) ? [] : [1]
+    content {
+      effect = "Allow"
+      actions = [
+        "cloudformation:*Resource*",
+        "cloudformation:*Stack*",
+      ]
+      resources = ["*"]
+    }
   }
 }
 
